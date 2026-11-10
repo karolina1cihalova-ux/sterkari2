@@ -14,7 +14,7 @@ Czech-only marketing site for stucco (stěrka) workshops: people learn to do stu
 
 ## Design rules (agreed with the owner)
 - Follow the existing look of https://sterkaristerky.vercel.app/: DM Sans, ink `#1A1A1A`, terracotta `#C45C26`, paper `#F7F4EF` alternating with white, 10px radius.
-- Buttons swap fill on hover (owner's reference): `btn-line` outline → solid ink; `btn-dark` solid ink → outline. "Chci na workshop" (header + hero) is `btn-dark`; secondary buttons like "Jak to funguje" are `btn-line`.
+- Buttons swap fill on hover (owner's reference): `btn-line` outline → solid ink; `btn-dark` solid ink → outline. "Chci na workshop" (header + hero) and the hero's "Jak to funguje" are `btn-dark`.
 - Header: logo `STĚRKAŘI.` always left, `CHCI NA WORKSHOP` always right, equal gaps around the menu; menu switches to the hamburger only when it no longer fits (measured in `Header.astro`).
 - Motion follows Emil Kowalski's design-engineering rules (`emil-design-eng` skill): custom ease-out curves, UI animations < 300ms, `scale(0.97)` on press, hover only on hover devices, respect `prefers-reduced-motion`.
 - Czech typography: no single-letter word (a, i, k, o, s, u, v, z) at a line end — use `&nbsp;` in markup or `cz()` from `src/data/sterky.ts`. Prices `2 490 Kč`, dates `13. 3. 2027`.
