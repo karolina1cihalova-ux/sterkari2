@@ -14,7 +14,7 @@ interface Props {
   sizes?: string;
   loading?: 'eager' | 'lazy';
 }
-const { photo, alt, structure, shade, widths = [480, 800, 1200], sizes = '(min-width: 901px) 33vw, 100vw', loading = 'lazy' } = Astro.props;
+const { photo, alt, structure, shade, widths = [480, 800, 1200], sizes = '(min-width: 901px) 33vw, 50vw', loading = 'lazy' } = Astro.props;
 ---
 {photo ? (
   <Image src={photo} alt={alt} widths={widths} sizes={sizes} loading={loading} class="block h-full w-full object-cover" />
