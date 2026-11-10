@@ -1,6 +1,4 @@
 ---
-import Wall from './Wall.astro';
-
 const facts = [
   { title: '1 den', text: 'typicky 9:00–17:00' },
   { title: 'Max. 6 lidí', text: 'na jeden termín' },
@@ -10,8 +8,7 @@ const facts = [
 ---
 <section class="bg-paper pt-[72px] max-[560px]:pt-12">
   <div class="wrap">
-    <div class="grid items-center gap-9 min-[901px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] min-[901px]:gap-12">
-      <div class="grid min-w-0 gap-[26px]">
+    <div class="grid max-w-[760px] min-w-0 gap-[26px]">
         <h1 class="text-[clamp(40px,5vw,60px)] leading-[1.02] font-bold tracking-[-0.03em]">
           Stěrku zvládnete sami.<span class="block text-accent">My vám ukážeme jak.</span>
         </h1>
@@ -22,11 +19,6 @@ const facts = [
           <a class="btn btn-dark" href="#kontakt">Chci na workshop</a>
           <a class="btn btn-line" href="#jak-to-funguje">Jak to funguje</a>
         </div>
-      </div>
-      <div class="relative aspect-[5/4] max-w-full animate-trowel overflow-hidden rounded-card shadow-[0_30px_60px_-36px_rgba(80,60,40,0.45)] motion-reduce:animate-none" aria-hidden="true">
-        <Wall shade="#D4C4A8" structure="benatsky" />
-        <span class="wall-tag">Benátský štuk · Písková</span>
-      </div>
     </div>
 
     <div class="mt-16 grid grid-cols-2 border-t border-line min-[901px]:grid-cols-4">
