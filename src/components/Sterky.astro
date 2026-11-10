@@ -5,7 +5,7 @@ import { STRUCTURES, SHADES, LEVEL_LABEL } from '../data/sterky';
 const s = STRUCTURES[0];
 const h = SHADES[0];
 ---
-<section class="py-24 max-[900px]:py-[72px]" id="sterky">
+<section class="bg-paper py-24 max-[900px]:py-[72px]" id="sterky">
   <div class="wrap">
     <div class="sec-head">
       <h2>Stěrky</h2>
@@ -13,7 +13,7 @@ const h = SHADES[0];
     </div>
 
     <div class="-mx-1 mb-8 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <div class="relative inline-flex gap-1 rounded-full bg-paper p-1" role="tablist" aria-label="Struktura stěrky" id="tabs">
+      <div class="relative inline-flex gap-1 rounded-full bg-white p-1" role="tablist" aria-label="Struktura stěrky" id="tabs">
         <span class="tab-ind absolute inset-y-1 left-0 rounded-full bg-ink" id="tabInd" aria-hidden="true"></span>
         {STRUCTURES.map((st, i) => (
           <button

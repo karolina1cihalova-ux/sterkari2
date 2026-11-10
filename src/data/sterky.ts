@@ -93,9 +93,9 @@ export const shadeById = (id: string) => SHADES.find((s) => s.id === id)!;
 
 // Links start with "/" so they also work from subpages (e.g. an installation detail).
 export const NAV = [
-  { href: '/#sterky', label: 'Stěrky' },
+  { href: '/#inspirace', label: 'Inspirace' },
   { href: '/#workshop', label: 'Workshop' },
   { href: '/#jak-to-funguje', label: 'Jak to funguje' },
-  { href: '/#inspirace', label: 'Inspirace' },
+  { href: '/#sterky', label: 'Stěrky' },
   { href: '/#o-nas', label: 'O nás' },
 ];

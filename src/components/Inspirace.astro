@@ -6,7 +6,7 @@ import { ROOMS } from '../data/sterky';
 const installations = (await getCollection('inspirace')).sort((a, b) => a.data.order - b.data.order);
 const filters = [{ room: 'vse', label: 'Vše' }, ...Object.entries(ROOMS).map(([room, label]) => ({ room, label }))];
 ---
-<section class="bg-paper py-24 max-[900px]:py-[72px]" id="inspirace">
+<section class="py-24 max-[900px]:py-[72px]" id="inspirace">
   <div class="wrap">
     <div class="sec-head">
       <h2>Inspirace</h2>
