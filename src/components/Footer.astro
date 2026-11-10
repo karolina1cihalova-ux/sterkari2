@@ -1,10 +1,10 @@
 ---
 import { NAV } from '../data/sterky';
-const links = [...NAV, { href: '#kontakt', label: 'Kontakt' }];
+const links = [...NAV, { href: '/#kontakt', label: 'Kontakt' }];
 ---
 <footer class="bg-ink pt-14 pb-10 text-sm text-[#bdb8b0]">
   <div class="wrap flex flex-wrap items-start justify-between gap-6">
-    <a class="text-[21.6px] font-extrabold tracking-[-0.04em] text-white no-underline" href="#top">STĚRKAŘI.</a>
+    <a class="text-[21.6px] font-extrabold tracking-[-0.04em] text-white no-underline" href="/">STĚRKAŘI.</a>
     <ul class="m-0 flex list-none flex-wrap gap-x-[22px] gap-y-2 p-0">
       {links.map((l) => (
         <li><a class="text-xs font-semibold tracking-[0.18em] text-[#e9e5de] uppercase no-underline hover:text-white" href={l.href}>{l.label}</a></li>

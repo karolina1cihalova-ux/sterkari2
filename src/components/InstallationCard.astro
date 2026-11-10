@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import InstallationPhoto from './InstallationPhoto.astro';
+import { ROOMS, cz } from '../data/sterky';
+
+interface Props {
+  item: CollectionEntry<'inspirace'>;
+}
+const { item } = Astro.props;
+const d = item.data;
+---
+<a class="card-link group grid gap-3 text-inherit no-underline" href={`/inspirace/${item.id}/`}>
+  <span class="relative block aspect-[4/5] max-w-full overflow-hidden rounded-card bg-line">
+    <span class="photo block h-full w-full">
+      <InstallationPhoto photo={d.cover} alt={d.title} structure={d.structure} shade={d.shade} />
+    </span>
+    <span class="absolute top-3 left-3 rounded-full bg-white/90 px-2.5 py-[5px] text-[11px] font-bold tracking-[0.14em] text-ink uppercase">{ROOMS[d.room]}</span>
+    <span class="go absolute right-3 bottom-3 grid size-10 place-items-center rounded-full bg-white text-ink shadow-[0_4px_14px_rgba(0,0,0,0.15)]" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </span>
+  </span>
+  <span class="text-base font-semibold text-ink">{cz(d.title)}</span>
+</a>
+
+<style>
+  /* The photo leans in slightly on hover (mouse only), the arrow nudges toward the click */
+  .photo { transition: transform 400ms var(--ease-out-strong); }
+  .go { transition: transform 250ms var(--ease-out-strong); }
+  @media (hover: hover) and (pointer: fine) {
+    .card-link:hover .photo { transform: scale(1.03); }
+    .card-link:hover .go { transform: translateX(3px); }
+  }
+  .card-link:active .photo { transform: scale(0.99); transition-duration: 160ms; }
+  @media (prefers-reduced-motion: reduce) {
+    .photo, .go { transition: none; }
+    .card-link:hover .photo, .card-link:hover .go, .card-link:active .photo { transform: none; }
+  }
+</style>

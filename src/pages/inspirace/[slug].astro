@@ -1,0 +1,148 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Wall from '../../components/Wall.astro';
+import InstallationPhoto from '../../components/InstallationPhoto.astro';
+import InstallationCard from '../../components/InstallationCard.astro';
+import { ROOMS, LEVEL_LABEL, cz, structureById, shadeById } from '../../data/sterky';
+
+export async function getStaticPaths() {
+  const all = await getCollection('inspirace');
+  return all.map((entry) => ({ params: { slug: entry.id }, props: { entry, all } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'inspirace'>;
+  all: CollectionEntry<'inspirace'>[];
+}
+const { entry, all } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const structure = structureById(d.structure);
+const shade = shadeById(d.shade);
+
+// Same room first, then the rest, by order
+const others = all
+  .filter((e) => e.id !== entry.id)
+  .sort((a, b) => Number(b.data.room === d.room) - Number(a.data.room === d.room) || a.data.order - b.data.order)
+  .slice(0, 3);
+
+const facts = [
+  { label: 'Místnost', value: ROOMS[d.room] },
+  d.place && { label: 'Místo', value: d.place },
+  d.area && { label: 'Plocha', value: d.area },
+  d.duration && { label: 'Doba práce', value: d.duration },
+].filter(Boolean) as { label: string; value: string }[];
+
+const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
+---
+<Layout title={`${d.title} | Inspirace | STĚRKAŘI.`} description={d.summary}>
+  <Header />
+  <main id="top">
+    <section class="bg-paper pt-10 pb-12 max-[560px]:pt-7">
+      <div class="wrap">
+        <a class="back inline-flex items-center gap-2 text-sm font-semibold text-ink no-underline" href="/#inspirace">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          Zpět na inspiraci
+        </a>
+        <div class="mt-8 grid max-w-[760px] gap-4">
+          <span class="justify-self-start rounded-full bg-white px-3 py-1.5 text-[11px] font-bold tracking-[0.14em] text-ink uppercase">{ROOMS[d.room]}</span>
+          <h1 class="text-[clamp(34px,4.6vw,54px)] leading-[1.05] font-bold tracking-[-0.03em]">{cz(d.title)}</h1>
+          <p class="text-[19px] leading-[1.55]">{cz(d.summary)}</p>
+        </div>
+        <dl class="mt-10 grid grid-cols-2 border-t border-line min-[901px]:grid-cols-4">
+          {facts.map((f) => (
+            <div class="grid min-w-0 gap-0.5 pt-5 pr-5 pb-1">
+              <dt class="text-sm">{f.label}</dt>
+              <dd class="m-0 text-[17px] font-bold text-ink">{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section class="pt-12 pb-24 max-[900px]:pb-[72px]">
+      <div class="wrap">
+        {d.sample && (
+          <p class="mb-6 rounded-lg border border-dashed border-[#d3ccc1] px-3.5 py-3 text-sm text-muted">
+            Ukázková realizace: text i&nbsp;fotky nahradíme skutečnými.
+          </p>
+        )}
+        <div class="relative aspect-[16/9] max-w-full overflow-hidden rounded-card bg-line max-[560px]:aspect-[4/5]">
+          <InstallationPhoto photo={d.cover} alt={d.title} structure={d.structure} shade={d.shade} sizes="(min-width: 1200px) 1152px, 100vw" widths={[800, 1200, 1800]} loading="eager" />
+        </div>
+
+        <div class="mt-14 grid items-start gap-10 min-[901px]:grid-cols-[minmax(0,1fr)_340px] min-[901px]:gap-16">
+          <article class="story min-w-0 max-w-[680px]">
+            <Content />
+          </article>
+
+          <aside class="grid gap-5 rounded-card bg-paper p-6 min-[901px]:sticky min-[901px]:top-[96px]">
+            <p class="text-[13px] font-semibold tracking-[0.14em] text-muted uppercase">Použitá stěrka</p>
+            <div class="flex items-center gap-4">
+              <span class="block size-16 flex-none overflow-hidden rounded-lg shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
+                <Wall shade={shade.hex} structure={structure.id} />
+              </span>
+              <div class="grid">
+                <b class="text-lg text-ink">{structure.name}</b>
+                <span class="text-sm">v&nbsp;odstínu {shade.name}</span>
+              </div>
+            </div>
+            <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 border-y border-line py-4 text-[14.5px]">
+              <dt class="text-muted">Vzhled</dt><dd class="m-0 font-medium text-ink">{structure.look}</dd>
+              <dt class="text-muted">Náročnost</dt>
+              <dd class="m-0 font-medium text-ink">
+                <span class="mr-2 inline-flex gap-1 align-middle" aria-hidden="true">
+                  {[1, 2, 3].map((k) => <i class:list={['size-2 rounded-full', k <= structure.level ? 'bg-accent' : 'bg-line']}></i>)}
+                </span>{LEVEL_LABEL[structure.level]}
+              </dd>
+            </dl>
+            <div class="grid gap-2.5">
+              <a class="btn btn-dark" href={learnHref}>Chci se to naučit</a>
+              <a class="btn btn-line" href="/#sterky">Prohlédnout stěrky</a>
+            </div>
+          </aside>
+        </div>
+
+        {d.gallery.length > 0 && (
+          <div class="mt-16 grid grid-cols-1 gap-4 min-[561px]:grid-cols-2">
+            {d.gallery.map((img, i) => (
+              <Image src={img} alt={`${d.title}, fotka ${i + 2}`} widths={[600, 1000]} sizes="(min-width: 561px) 50vw, 100vw" class="aspect-[4/3] w-full rounded-card object-cover" />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+
+    {others.length > 0 && (
+      <section class="bg-paper py-24 max-[900px]:py-[72px]">
+        <div class="wrap">
+          <div class="sec-head flex flex-wrap items-end justify-between gap-4 max-w-none">
+            <h2>Další inspirace</h2>
+            <a class="btn btn-line" href="/#inspirace">Všechny realizace</a>
+          </div>
+          <ul class="m-0 grid list-none grid-cols-1 gap-5 p-0 min-[561px]:grid-cols-2 min-[901px]:grid-cols-3">
+            {others.map((o) => <li><InstallationCard item={o} /></li>)}
+          </ul>
+        </div>
+      </section>
+    )}
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .back svg { transition: transform 200ms var(--ease-out-strong); }
+  @media (hover: hover) and (pointer: fine) { .back:hover svg { transform: translateX(-3px); } }
+
+  /* Markdown text of the installation */
+  .story :global(h2) { font-size: 22px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; margin: 40px 0 10px; color: var(--color-ink); }
+  .story :global(h2:first-child) { margin-top: 0; }
+  .story :global(p) { font-size: 17px; line-height: 1.7; margin: 0 0 14px; }
+  .story :global(ul), .story :global(ol) { font-size: 17px; line-height: 1.7; margin: 0 0 14px; padding-left: 22px; }
+  .story :global(strong) { color: var(--color-ink); }
+  .story :global(a) { color: var(--color-accent); text-underline-offset: 3px; }
+</style>

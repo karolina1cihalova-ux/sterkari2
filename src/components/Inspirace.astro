@@ -1,24 +1,16 @@
 ---
-import Wall from './Wall.astro';
-import { INSPIRACE, STRUCTURES, SHADES } from '../data/sterky';
+import { getCollection } from 'astro:content';
+import InstallationCard from './InstallationCard.astro';
+import { ROOMS } from '../data/sterky';
 
-const structureName = (id: string) => STRUCTURES.find((s) => s.id === id)?.name ?? '';
-const cardTitle = (title: string) => {
-  const t = title.split(' — ')[1] ?? title;
-  return t.charAt(0).toLocaleUpperCase('cs') + t.slice(1);
-};
-const filters = [
-  { room: 'vse', label: 'Vše' },
-  { room: 'obyvak', label: 'Obývák' },
-  { room: 'koupelna', label: 'Koupelna' },
-  { room: 'chodba', label: 'Chodba' },
-];
+const installations = (await getCollection('inspirace')).sort((a, b) => a.data.order - b.data.order);
+const filters = [{ room: 'vse', label: 'Vše' }, ...Object.entries(ROOMS).map(([room, label]) => ({ room, label }))];
 ---
 <section class="bg-paper py-24 max-[900px]:py-[72px]" id="inspirace">
   <div class="wrap">
     <div class="sec-head">
       <h2>Inspirace</h2>
-      <p>Jak stěrka vypadá v&nbsp;obýváku, koupelně nebo na chodbě. Vyberte místnost a&nbsp;nechte se inspirovat.</p>
+      <p>Stěny, které vznikly po našem workshopu. Klikněte na fotku a&nbsp;přečtěte si, jak vznikla.</p>
     </div>
 
     <div class="mb-7 flex flex-wrap gap-2" role="group" aria-label="Filtrovat podle místnosti" id="filters">
@@ -28,18 +20,13 @@ const filters = [
     </div>
 
     <ul class="m-0 grid list-none grid-cols-1 gap-5 p-0 min-[561px]:grid-cols-2 min-[901px]:grid-cols-3" id="grid">
-      {INSPIRACE.map((it) => (
-        <li class="card grid gap-2.5" data-room={it.room}>
-          <span class="relative block aspect-[4/3] max-w-full overflow-hidden rounded-card">
-            <Wall shade={SHADES[it.shade].hex} structure={it.structure} />
-            <span class="absolute top-3 left-3 rounded-full bg-white/90 px-2.5 py-[5px] text-[11px] font-bold tracking-[0.14em] text-ink uppercase">{it.label}</span>
-          </span>
-          <b class="text-[15.5px] font-semibold text-ink">{cardTitle(it.title)}</b>
-          <small class="text-[13px] text-muted">{structureName(it.structure)} · {SHADES[it.shade].name}</small>
-        </li>
+      {installations.map((it) => (
+        <li class="card" data-room={it.data.room}><InstallationCard item={it} /></li>
       ))}
     </ul>
-    <p class="mt-6 text-[13px] text-muted">Ilustrační ukázky. Fotky skutečných stěn doplníme.</p>
+    {installations.some((it) => it.data.sample) && (
+      <p class="mt-6 text-[13px] text-muted">Ilustrační ukázky. Fotky skutečných realizací doplníme.</p>
+    )}
   </div>
 </section>
 

@@ -71,9 +71,7 @@ const label = 'text-[13px] font-semibold text-ink';
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const toast = (msg: string) => window.dispatchEvent(new CustomEvent('toast', { detail: msg }));
 
-  // A stucco picked in the Stěrky section shows up here
-  window.addEventListener('sterka-pick', (e) => {
-    const { structure, shade } = (e as CustomEvent<{ structure: number; shade: number }>).detail;
+  const showChoice = (structure: number, shade: number) => {
     const s = STRUCTURES[structure];
     const h = SHADES[shade];
     chosen.querySelector('[data-base]')!.setAttribute('fill', h.hex);
@@ -81,7 +79,19 @@ const label = 'text-[13px] font-semibold text-ink';
     document.getElementById('chName')!.textContent = `${s.name} · ${h.name}`;
     hiddenInput.value = `${s.name} · ${h.name}`;
     chosen.hidden = false;
-    toast(`Přidáno do rezervace: ${s.name} · ${h.name}`);
+    return `${s.name} · ${h.name}`;
+  };
+
+  // Coming from an installation page ("Chci se to naučit"): /?struktura=beton&odstin=antracit#kontakt
+  const params = new URLSearchParams(location.search);
+  const fromStructure = STRUCTURES.findIndex((s) => s.id === params.get('struktura'));
+  const fromShade = SHADES.findIndex((h) => h.id === params.get('odstin'));
+  if (fromStructure > -1 && fromShade > -1) showChoice(fromStructure, fromShade);
+
+  // A stucco picked in the Stěrky section shows up here
+  window.addEventListener('sterka-pick', (e) => {
+    const { structure, shade } = (e as CustomEvent<{ structure: number; shade: number }>).detail;
+    toast(`Přidáno do rezervace: ${showChoice(structure, shade)}`);
     document.getElementById('kontakt')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
     setTimeout(() => (document.getElementById('name') as HTMLInputElement).focus({ preventScroll: true }), reduce ? 0 : 600);
   });

@@ -80,28 +80,22 @@ export const SHADES: Shade[] = [
 
 export const LEVEL_LABEL = ['', 'snadná', 'střední', 'náročnější'] as const;
 
-export type InspiraceItem = {
-  room: 'obyvak' | 'koupelna' | 'chodba';
-  label: string;
-  title: string;
-  structure: string;
-  shade: number;
-};
+// Rooms used to filter the Inspirace section. Installations themselves live in src/content/inspirace/.
+export const ROOMS = {
+  obyvak: 'Obývák',
+  koupelna: 'Koupelna',
+  chodba: 'Chodba',
+} as const;
+export type RoomId = keyof typeof ROOMS;
 
-// Illustrative examples until real client photos exist.
-export const INSPIRACE: InspiraceItem[] = [
-  { room: 'obyvak', label: 'Obývák', title: 'Obývák — teplá písková stěna', structure: 'vapenna', shade: 0 },
-  { room: 'koupelna', label: 'Koupelna', title: 'Koupelna — bílá křída', structure: 'tadelakt', shade: 3 },
-  { room: 'chodba', label: 'Chodba', title: 'Chodba — antracitový pruh', structure: 'beton', shade: 5 },
-  { room: 'obyvak', label: 'Obývák', title: 'Obývák — olivová hlína', structure: 'hlinena', shade: 2 },
-  { room: 'koupelna', label: 'Koupelna', title: 'Koupelna — šedá mlha', structure: 'mikrocement', shade: 1 },
-  { room: 'chodba', label: 'Chodba', title: 'Chodba — písková s dřevěnou lištou', structure: 'benatsky', shade: 0 },
-];
+export const structureById = (id: string) => STRUCTURES.find((s) => s.id === id)!;
+export const shadeById = (id: string) => SHADES.find((s) => s.id === id)!;
 
+// Links start with "/" so they also work from subpages (e.g. an installation detail).
 export const NAV = [
-  { href: '#sterky', label: 'Stěrky' },
-  { href: '#workshop', label: 'Workshop' },
-  { href: '#jak-to-funguje', label: 'Jak to funguje' },
-  { href: '#inspirace', label: 'Inspirace' },
-  { href: '#o-nas', label: 'O nás' },
+  { href: '/#sterky', label: 'Stěrky' },
+  { href: '/#workshop', label: 'Workshop' },
+  { href: '/#jak-to-funguje', label: 'Jak to funguje' },
+  { href: '/#inspirace', label: 'Inspirace' },
+  { href: '/#o-nas', label: 'O nás' },
 ];

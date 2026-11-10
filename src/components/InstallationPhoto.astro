@@ -1,0 +1,23 @@
+---
+/** Cover photo of an installation, or a generated texture until a real photo exists. */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Wall from './Wall.astro';
+import { shadeById } from '../data/sterky';
+
+interface Props {
+  photo?: ImageMetadata;
+  alt: string;
+  structure: string;
+  shade: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+}
+const { photo, alt, structure, shade, widths = [480, 800, 1200], sizes = '(min-width: 901px) 33vw, 100vw', loading = 'lazy' } = Astro.props;
+---
+{photo ? (
+  <Image src={photo} alt={alt} widths={widths} sizes={sizes} loading={loading} class="block h-full w-full object-cover" />
+) : (
+  <Wall shade={shadeById(shade).hex} structure={structure} />
+)}
