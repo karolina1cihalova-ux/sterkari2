@@ -51,17 +51,37 @@
 
 @layer components {
   /* Buttons: pill, uppercase, press feedback */
+  /*
+   * Interaction (from the owner's reference recording): on hover the button fills —
+   * outline → solid ink with white text, solid → outline. Colour fades in ~220ms and
+   * fades back a bit faster (160ms) when the pointer leaves. Touch: the swap shows on press.
+   */
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent px-8 py-3.5 text-xs font-semibold uppercase no-underline;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full border-[1.5px] border-ink px-8 py-3.5 text-xs font-semibold uppercase no-underline;
     letter-spacing: 0.025em;
-    transition: transform 160ms var(--ease-out-strong), background-color 180ms ease, border-color 180ms ease;
+    transition:
+      transform 160ms var(--ease-out-strong),
+      background-color 160ms ease,
+      color 160ms ease,
+      box-shadow 160ms ease;
   }
   .btn:active { transform: scale(0.97); }
+
+  /* Outline at rest, fills on hover */
+  .btn-line { @apply bg-transparent text-ink; }
+  /* Solid at rest, turns to outline on hover */
   .btn-dark {
-    @apply bg-ink text-white hover:bg-[#333];
+    @apply bg-ink text-white;
     box-shadow: 0 4px 6px -1px rgb(26 26 26 / 0.15), 0 2px 4px -2px rgb(26 26 26 / 0.15);
   }
-  .btn-line { @apply border-[#cfc9bf] bg-transparent text-ink hover:border-ink; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover { transition-duration: 160ms, 220ms, 220ms, 220ms; }
+    .btn-line:hover { @apply bg-ink text-white; }
+    .btn-dark:hover { @apply bg-white text-ink; box-shadow: none; }
+  }
+  .btn-line:focus-visible, .btn-line:active { @apply bg-ink text-white; }
+  .btn-dark:focus-visible, .btn-dark:active { @apply bg-white text-ink; box-shadow: none; }
 
   /* Small white label on top of a wall texture */
   .wall-tag {
