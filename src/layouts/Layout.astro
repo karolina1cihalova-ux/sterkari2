@@ -1,0 +1,35 @@
+---
+import '@fontsource-variable/dm-sans';
+import '../styles/global.css';
+import PlasterFilters from '../components/PlasterFilters.astro';
+import Toast from '../components/Toast.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'STĚRKAŘI. | Workshop stěrkových stěn',
+  description = 'Stěrku zvládnete sami. Jednodenní workshop ve showroomu v Praze, materiál a nářadí v ceně a podpora, když je potřeba.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="cs_CZ" />
+    <meta name="theme-color" content="#ffffff" />
+  </head>
+  <body>
+    <PlasterFilters />
+    <slot />
+    <Toast />
+  </body>
+</html>

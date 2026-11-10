@@ -1,0 +1,164 @@
+---
+import Wall from './Wall.astro';
+import { STRUCTURES, SHADES, LEVEL_LABEL } from '../data/sterky';
+
+const s = STRUCTURES[0];
+const h = SHADES[0];
+---
+<section class="py-24 max-[900px]:py-[72px]" id="sterky">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Stěrky</h2>
+      <p>Vyberte si strukturu a&nbsp;odstín. Na workshopu si všechno vyzkoušíte na vzorku.</p>
+    </div>
+
+    <div class="-mx-1 mb-8 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div class="relative inline-flex gap-1 rounded-full bg-paper p-1" role="tablist" aria-label="Struktura stěrky" id="tabs">
+        <span class="tab-ind absolute inset-y-1 left-0 rounded-full bg-ink" id="tabInd" aria-hidden="true"></span>
+        {STRUCTURES.map((st, i) => (
+          <button
+            class="tab relative z-[1] cursor-pointer whitespace-nowrap rounded-full border-0 bg-transparent px-[18px] py-2.5 text-sm font-semibold text-ink aria-selected:text-white"
+            type="button"
+            role="tab"
+            id={`tab-${st.id}`}
+            aria-controls="panel"
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-index={i}
+          >{st.name}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="grid items-start gap-9 min-[901px]:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] min-[901px]:gap-12">
+      <div class="relative aspect-[4/3] max-w-full overflow-hidden rounded-card" id="preview" aria-hidden="true">
+        <Wall shade={h.hex} structure={s.id} />
+        <span class="wall-tag" id="pvTag">{s.name} · {h.name}</span>
+      </div>
+
+      <div class="grid min-w-0 gap-[22px]" role="tabpanel" id="panel" aria-labelledby={`tab-${s.id}`}>
+        <h3 class="text-[30px] leading-[1.1] font-bold tracking-[-0.02em]">
+          <span id="sName">{s.name}</span>
+          <small class="mt-1.5 block text-base font-medium tracking-normal text-muted" id="sShade">v&nbsp;odstínu {h.name}</small>
+        </h3>
+        <p class="text-[16.5px]" id="sDesc">{s.desc}</p>
+        <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-y border-line py-4 text-[14.5px]">
+          <dt class="text-muted">Vzhled</dt><dd class="m-0 font-medium text-ink" id="sLook">{s.look}</dd>
+          <dt class="text-muted">Kam se hodí</dt><dd class="m-0 font-medium text-ink" id="sRooms">{s.rooms}</dd>
+          <dt class="text-muted">Náročnost</dt>
+          <dd class="m-0 font-medium text-ink">
+            <span class="mr-2 inline-flex gap-1 align-middle" id="sDots" aria-hidden="true">
+              {[1, 2, 3].map((k) => <i class:list={['size-2 rounded-full', k <= s.level ? 'bg-accent' : 'bg-line']}></i>)}
+            </span><span id="sLevel">{LEVEL_LABEL[s.level]}</span>
+          </dd>
+        </dl>
+        <div>
+          <p class="text-[13px] font-semibold text-ink" id="shadeLabel">Odstín</p>
+          <div class="mt-2.5 grid grid-cols-6 gap-2.5 max-[560px]:grid-cols-3" id="shades" role="group" aria-labelledby="shadeLabel">
+            {SHADES.map((sh, i) => (
+              <button class="shade grid cursor-pointer gap-1.5 border-0 bg-transparent p-0 text-left" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-index={i}>
+                <span class="sw block aspect-square overflow-hidden rounded-lg shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
+                  <Wall shade={sh.hex} structure={s.id} />
+                </span>
+                <span class="text-[11.5px] leading-tight text-body">{sh.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button class="btn btn-dark" type="button" id="pickBtn">Chci tuhle stěrku</button>
+          <span class="text-[13px] text-muted">Textury jsou ilustrační, skutečné vzorky uvidíte ve showroomu.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tab-ind { transition: transform 300ms var(--ease-out-strong), width 300ms var(--ease-out-strong); }
+  .tab { transition: color 200ms ease, transform 160ms var(--ease-out-strong); }
+  .tab:active { transform: scale(0.97); }
+  .shade { transition: transform 160ms var(--ease-out-strong); }
+  .shade:active { transform: scale(0.96); }
+  .shade .sw { outline: 2px solid transparent; outline-offset: 2px; transition: outline-color 180ms ease; }
+  .shade[aria-pressed='true'] .sw { outline-color: var(--color-accent); }
+  @media (prefers-reduced-motion: reduce) {
+    .tab-ind { transition: none; }
+    .tab:active, .shade:active { transform: none; }
+  }
+</style>
+
+<script>
+  import { STRUCTURES, SHADES, LEVEL_LABEL } from '../data/sterky';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tabsEl = document.getElementById('tabs')!;
+  const tabs = [...tabsEl.querySelectorAll<HTMLButtonElement>('.tab')];
+  const ind = document.getElementById('tabInd')!;
+  const preview = document.getElementById('preview')!;
+  const shadeBtns = [...document.querySelectorAll<HTMLButtonElement>('#shades .shade')];
+  const $ = (id: string) => document.getElementById(id)!;
+  const state = { s: 0, h: 0 };
+
+  const moveInd = () => {
+    const t = tabs[state.s];
+    ind.style.width = `${t.offsetWidth}px`;
+    ind.style.transform = `translateX(${t.offsetLeft}px)`;
+  };
+
+  // Blur masks the crossfade between two textures
+  const settle = (el: Element) => {
+    if (reduce) return;
+    el.animate([{ filter: 'blur(6px)', opacity: 0.75 }, { filter: 'blur(0px)', opacity: 1 }], {
+      duration: 280,
+      easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+    });
+  };
+
+  const render = (animate: boolean) => {
+    const s = STRUCTURES[state.s];
+    const h = SHADES[state.h];
+    tabs.forEach((t, i) => {
+      t.setAttribute('aria-selected', String(i === state.s));
+      t.tabIndex = i === state.s ? 0 : -1;
+    });
+    $('panel').setAttribute('aria-labelledby', `tab-${s.id}`);
+    moveInd();
+    preview.querySelector('[data-base]')!.setAttribute('fill', h.hex);
+    preview.querySelector('[data-tex]')!.setAttribute('filter', `url(#t-${s.id})`);
+    $('pvTag').textContent = `${s.name} · ${h.name}`;
+    $('sName').textContent = s.name;
+    $('sShade').textContent = `v odstínu ${h.name}`;
+    $('sDesc').textContent = s.desc;
+    $('sLook').textContent = s.look;
+    $('sRooms').textContent = s.rooms;
+    $('sLevel').textContent = LEVEL_LABEL[s.level];
+    [...$('sDots').children].forEach((d, k) => {
+      d.classList.toggle('bg-accent', k < s.level);
+      d.classList.toggle('bg-line', k >= s.level);
+    });
+    shadeBtns.forEach((b, i) => {
+      b.setAttribute('aria-pressed', String(i === state.h));
+      b.querySelector('[data-tex]')!.setAttribute('filter', `url(#t-${s.id})`);
+    });
+    if (animate) settle(preview);
+  };
+
+  tabs.forEach((t, i) => t.addEventListener('click', () => { if (i !== state.s) { state.s = i; render(true); } }));
+  tabsEl.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    state.s = (state.s + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+    render(true);
+    tabs[state.s].focus();
+  });
+  shadeBtns.forEach((b, i) => b.addEventListener('click', () => { if (i !== state.h) { state.h = i; render(true); } }));
+
+  // "Chci tuhle stěrku" → attach the choice to the booking form
+  $('pickBtn').addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('sterka-pick', { detail: { structure: state.s, shade: state.h } }));
+  });
+
+  window.addEventListener('resize', moveInd);
+  document.fonts?.ready.then(moveInd);
+  moveInd();
+</script>

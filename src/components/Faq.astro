@@ -1,0 +1,46 @@
+---
+const faq = [
+  { q: 'Jak dlouho workshop trvá?', a: 'Počítejte s celým dnem, typicky 9:00–17:00 včetně pauz. Tempo přizpůsobujeme skupině, aby každý stihl celý postup vyzkoušet.' },
+  { q: 'Jak velkou stěnu zvládnu sám?', a: 'Na workshopu trénujete techniku na vzorku. Doma pak zvládnete běžný obývací pokoj nebo koupelnu, pokud dodržíte postup. U větších ploch doporučíme rozdělit práci na etapy.' },
+  { q: 'Je stěrka vhodná do koupelny?', a: 'Ano, s vhodnou přípravou podkladu a správným finišem. Na workshopu projdeme specifika vlhkého prostředí a doporučené vrstvy.' },
+  { q: 'Pomůžete mi doma, když se zaseknu?', a: 'Ano. Po workshopu máte kontakt na konzultaci telefonem i e-mailem. U složitějších situací domluvíme individuální podporu.' },
+  { q: 'Jak probíhá dodání materiálu?', a: 'Balíček připravíme podle zvoleného odstínu a rozměrů, které si domluvíme po workshopu. Pošleme ho kurýrem, nebo si ho vyzvednete ve showroomu.' },
+];
+---
+<section class="bg-paper py-24 max-[900px]:py-[72px]" id="faq">
+  <div class="wrap">
+    <div class="sec-head"><h2>Časté dotazy</h2></div>
+    <div class="max-w-[820px] border-t border-line" id="faqList">
+      {faq.map((item, i) => (
+        <div class="border-b border-line">
+          <button class="faq-q flex w-full cursor-pointer items-center justify-between gap-5 border-0 bg-transparent py-[22px] text-left text-lg font-semibold text-ink" type="button" aria-expanded={i === 0 ? 'true' : 'false'}>
+            {item.q}
+            <span class="ic grid size-7 flex-none place-items-center rounded-full border border-stone" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+            </span>
+          </button>
+          <div class="faq-a grid">
+            <div class="overflow-hidden"><p class="pr-12 pb-[22px] max-[560px]:pr-0">{item.a}</p></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Height animates via grid rows, so the answer needs no measured height */
+  .faq-a { grid-template-rows: 0fr; transition: grid-template-rows 250ms var(--ease-out-strong); }
+  .faq-q[aria-expanded='true'] + .faq-a { grid-template-rows: 1fr; }
+  .ic { transition: transform 250ms var(--ease-out-strong), background-color 200ms ease, border-color 200ms ease, color 200ms ease; }
+  .faq-q[aria-expanded='true'] .ic { transform: rotate(45deg); background: var(--color-ink); border-color: var(--color-ink); color: #fff; }
+  @media (prefers-reduced-motion: reduce) { .faq-a, .ic { transition: none; } }
+</style>
+
+<script>
+  document.getElementById('faqList')!.addEventListener('click', (e) => {
+    const q = (e.target as HTMLElement).closest('.faq-q');
+    if (!q) return;
+    q.setAttribute('aria-expanded', q.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+  });
+</script>

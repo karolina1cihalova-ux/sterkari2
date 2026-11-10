@@ -1,0 +1,668 @@
+<title>Stěrkaři Direction Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=DM+Sans:opsz,wght@9..40,400..900&family=Big+Shoulders+Display:wght@700;800&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Schibsted+Grotesk:wght@400;500;700&display=swap">
+<style>
+/* Layout: a quiet board chrome; each direction is a full-bleed website preview with its own fixed palette, followed by palette, type and texture specimens. */
+:root {
+  --bg: #F2F2EF;
+  --fg: #17181A;
+  --muted: #5E625F;
+  --line: #D6D8D2;
+  --surface: #FAFAF8;
+  --focus: #2D45A0;
+  --chrome: "Hanken Grotesk", system-ui, sans-serif;
+  --label: "IBM Plex Mono", ui-monospace, monospace;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141516; --fg: #E8E8E4; --muted: #9EA19C; --line: #2C2E2D; --surface: #1B1C1D; --focus: #8EA2F0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141516; --fg: #E8E8E4; --muted: #9EA19C; --line: #2C2E2D; --surface: #1B1C1D; --focus: #8EA2F0;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--chrome);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* ---------- Board chrome ---------- */
+.intro { padding-block: 56px 32px; display: grid; gap: 20px; }
+.eyebrow { font-family: var(--label); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.intro h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.05; letter-spacing: -0.02em; margin: 0; font-weight: 600; text-wrap: balance; max-width: 18ch; }
+.intro p { margin: 0; max-width: 62ch; color: var(--muted); }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.jump a {
+  font-family: var(--label); font-size: 13px; color: var(--fg); text-decoration: none;
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+  transition: transform 160ms var(--ease-out), background-color 150ms ease;
+}
+.jump a:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .jump a:hover { background: var(--surface); } }
+
+.direction { padding-block: 48px 24px; border-top: 1px solid var(--line); display: grid; gap: 28px; scroll-margin-top: 16px; }
+.d-head { display: grid; grid-template-columns: auto 1fr; gap: 8px 20px; align-items: baseline; }
+.d-letter { font-family: var(--label); font-size: 14px; color: var(--muted); }
+.d-head h2 { margin: 0; font-size: 28px; letter-spacing: -0.01em; font-weight: 600; }
+.d-head h2 span { color: var(--muted); font-weight: 400; }
+.d-head p { grid-column: 2; margin: 0; max-width: 64ch; color: var(--muted); }
+.d-notes { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px 24px; font-size: 14px; margin: 4px 0 0; padding: 0; list-style: none; }
+.d-notes b { font-weight: 600; }
+
+/* ---------- Shared preview structure (each direction overrides tokens) ---------- */
+.site {
+  --s-ground: #fff; --s-ink: #000; --s-accent: #333; --s-panel: #ccc; --s-soft: #eee; --s-on-accent: #fff;
+  background: var(--s-ground); color: var(--s-ink);
+  border-radius: 6px; overflow: hidden;
+  font-family: var(--s-body);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 12px 32px -18px rgba(0,0,0,0.25);
+}
+/* Header: copied from the reference screenshot, identical in every direction */
+.hdr {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px;
+  padding: 16px 24px; min-height: 73px; background: var(--s-header-bg, #FFFFFF); color: #000000;
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+.hdr-logo {
+  font-family: "DM Sans", "Arial", sans-serif; font-weight: 800;
+  font-size: 21.6px; letter-spacing: -0.04em; justify-self: start;
+}
+.hdr-nav ul { list-style: none; display: flex; align-items: center; margin: 0; padding: 0; }
+.hdr-nav li {
+  font-family: "DM Sans", system-ui, sans-serif; font-weight: 900; font-size: 12px;
+  letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap;
+}
+.hdr-nav li + li::before {
+  content: "·"; display: inline-block; margin: 0 12px 0 10px; color: #A1A1A1; font-weight: 400; letter-spacing: 0;
+}
+.hdr-cta {
+  justify-self: end; font-family: "DM Sans", system-ui, sans-serif; font-weight: 600; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.025em; cursor: pointer;
+  background: #1A1A1A; color: #FFFFFF; border: 0; border-radius: 999px; padding: 12px 32px;
+  box-shadow: 0 4px 6px -1px rgba(26, 26, 26, 0.15), 0 2px 4px -2px rgba(26, 26, 26, 0.15);
+  transition: transform 160ms var(--ease-out), box-shadow 200ms ease;
+}
+.hdr-cta:active { transform: scale(0.97); box-shadow: 0 2px 4px -2px rgba(26, 26, 26, 0.15); }
+.hdr-menu {
+  display: none; justify-self: end; font-family: "DM Sans", sans-serif; font-weight: 900; font-size: 11px;
+  letter-spacing: 0.2em; text-transform: uppercase; background: transparent; color: #141414;
+  border: 1px solid #D9D9D9; border-radius: 999px; padding: 9px 16px; cursor: pointer;
+  transition: transform 160ms var(--ease-out);
+}
+.hdr-menu:active { transform: scale(0.97); }
+@media (max-width: 1080px) {
+  .hdr { grid-template-columns: 1fr auto auto; }
+  .hdr-nav { display: none; }
+  .hdr-menu { display: inline-block; }
+}
+@media (max-width: 520px) {
+  .hdr { padding: 16px 18px; gap: 10px; }
+  .hdr-cta { display: none; }
+}
+
+/* O nás */
+.about {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 32px 48px;
+  padding: 56px 28px; border-top: 1px solid var(--s-line);
+}
+.about-head { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.about-eyebrow { font-family: "DM Sans", sans-serif; font-weight: 900; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.7; }
+.about h3 { margin: 0; font-family: var(--s-display); font-size: clamp(28px, 3.4vw, 42px); line-height: 1.05; text-wrap: balance; }
+.about-photo {
+  aspect-ratio: 4 / 3; max-width: 100%; background: var(--s-soft); border-radius: var(--s-photo-radius, 4px);
+  display: grid; place-items: end start; padding: 14px;
+}
+.about-photo span { font-family: var(--s-mono); font-size: 11.5px; opacity: 0.7; }
+.about-body { display: grid; gap: 16px; align-content: start; min-width: 0; font-size: 16.5px; line-height: 1.65; }
+.about-body p { margin: 0; max-width: 58ch; }
+.about-steps { list-style: none; margin: 8px 0 0; padding: 0; display: grid; border-top: 1px solid var(--s-line); }
+.about-steps li { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--s-line); }
+.about-steps b { font-weight: 600; }
+.about-steps span { opacity: 0.8; font-size: 15px; }
+.about-sign { font-family: var(--s-mono); font-size: 12.5px; opacity: 0.6; }
+@media (max-width: 860px) {
+  .about { grid-template-columns: 1fr; padding-block: 40px; }
+  .about-steps li { grid-template-columns: 1fr; gap: 2px; }
+}
+@media (max-width: 520px) { .about { padding-left: 18px; padding-right: 18px; } }
+#vapno .about h3 { font-weight: 800; font-variation-settings: "wdth" 112; letter-spacing: -0.02em; }
+#beton .about h3 { font-weight: 800; text-transform: uppercase; font-size: clamp(36px, 5vw, 60px); line-height: 0.92; }
+#hlina .about h3 { font-weight: 300; font-variation-settings: "opsz" 72; }
+#hlina .site { --s-photo-radius: 18px; }
+.hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); min-height: 420px; }
+.hero-copy { padding: 40px 28px 36px; display: flex; flex-direction: column; gap: 20px; justify-content: center; min-width: 0; }
+.hero-copy h3 { margin: 0; font-family: var(--s-display); text-wrap: balance; }
+.hero-copy p { margin: 0; max-width: 46ch; font-size: 17px; line-height: 1.6; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+.btn {
+  font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; border: 0;
+  background: var(--s-accent); color: var(--s-on-accent);
+  padding: 14px 22px; border-radius: var(--s-radius, 4px);
+  transition: transform 160ms var(--ease-out), background-color 150ms ease;
+}
+.btn:active { transform: scale(0.97); }
+.next { font-family: var(--s-mono); font-size: 12.5px; line-height: 1.5; opacity: 0.85; }
+.next em { font-style: normal; opacity: 0.6; }
+.tex-panel { position: relative; min-height: 280px; overflow: hidden; }
+.tex-panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.tex-tag {
+  position: absolute; left: 16px; bottom: 16px; font-family: var(--s-mono); font-size: 11.5px;
+  background: var(--s-ground); color: var(--s-ink); padding: 5px 9px; border-radius: 3px;
+}
+.kit { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--s-line); }
+.kit div { padding: 16px 20px; border-right: 1px solid var(--s-line); min-width: 0; }
+.kit div:last-child { border-right: 0; }
+.kit small { display: block; font-family: var(--s-mono); font-size: 11px; opacity: 0.65; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.kit span { font-size: 14.5px; }
+
+/* ---------- Specimens ---------- */
+.specs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 20px; min-width: 0; }
+.card h4 { margin: 0 0 14px; font-family: var(--label); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.swatches { display: grid; gap: 8px; }
+.swatch {
+  display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: center;
+  width: 100%; text-align: left; font: inherit; color: var(--fg); background: transparent;
+  border: 0; padding: 4px; border-radius: 6px; cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 150ms ease;
+}
+.swatch:active { transform: scale(0.98); }
+@media (hover: hover) and (pointer: fine) { .swatch:hover { background: var(--bg); } }
+.chip { width: 44px; height: 44px; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); }
+.swatch strong { display: block; font-weight: 600; font-size: 15px; }
+.swatch span { font-size: 13px; color: var(--muted); }
+.swatch code { font-family: var(--label); font-size: 12.5px; color: var(--muted); }
+
+.type-spec { display: grid; gap: 18px; }
+.type-row { display: grid; gap: 4px; min-width: 0; }
+.type-row small { font-family: var(--label); font-size: 11.5px; color: var(--muted); }
+.type-row .sample { overflow-wrap: anywhere; }
+.big { font-size: clamp(30px, 4vw, 44px); line-height: 1.1; }
+.caps { font-size: 22px; letter-spacing: 0.02em; }
+.body-s { font-size: 16px; line-height: 1.6; max-width: 60ch; }
+.mono-s { font-size: 14px; }
+
+/* ---------- A · Vápno ---------- */
+#vapno .site {
+  --s-ground: #ECEDE8; --s-ink: #1C2127; --s-accent: #2D45A0; --s-on-accent: #F4F5F8; --s-panel: #C8CBC3; --s-soft: #DADDE6;
+  --s-line: #D4D6CF;
+  --s-display: "Archivo", "Arial Narrow", sans-serif;
+  --s-body: "Archivo", system-ui, sans-serif;
+  --s-mono: "JetBrains Mono", ui-monospace, monospace;
+  --s-radius: 2px;
+  font-variation-settings: "wdth" 100;
+}
+#vapno .hero-copy h3 { font-size: clamp(40px, 6vw, 72px); line-height: 0.95; font-weight: 800; font-variation-settings: "wdth" 118; letter-spacing: -0.03em; }
+#vapno .hero-copy h3 i { font-style: normal; color: var(--s-accent); }
+#vapno .a-display { font-family: "Archivo", sans-serif; font-weight: 800; font-variation-settings: "wdth" 118; letter-spacing: -0.02em; }
+#vapno .a-body { font-family: "Archivo", sans-serif; font-variation-settings: "wdth" 100; }
+#vapno .a-mono { font-family: "JetBrains Mono", monospace; }
+
+/* ---------- B · Beton ---------- */
+#beton .site {
+  --s-ground: #B7B4AD; --s-ink: #191917; --s-accent: #191917; --s-on-accent: #E4E2DC; --s-panel: #8E8B84; --s-soft: #E4E2DC;
+  --s-line: #9F9C95; --s-rust: #A94E27;
+  --s-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --s-body: "Schibsted Grotesk", system-ui, sans-serif;
+  --s-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --s-radius: 0;
+}
+#beton .hero-copy h3 { font-size: clamp(52px, 8vw, 104px); line-height: 0.86; font-weight: 800; text-transform: uppercase; letter-spacing: 0.005em; }
+#beton .hero-copy h3 i { font-style: normal; color: var(--s-rust); }
+#beton .btn { text-transform: uppercase; letter-spacing: 0.06em; font-size: 13.5px; }
+#beton .next { border-left: 3px solid var(--s-rust); padding-left: 10px; }
+#beton .b-display { font-family: "Big Shoulders Display", sans-serif; font-weight: 800; text-transform: uppercase; }
+#beton .b-body { font-family: "Schibsted Grotesk", sans-serif; }
+#beton .b-mono { font-family: "IBM Plex Mono", monospace; }
+
+/* ---------- C · Hlína ---------- */
+#hlina .site {
+  --s-ground: #E4E2D7; --s-ink: #2A2922; --s-accent: #5A5D2C; --s-on-accent: #F1F0E6; --s-panel: #C4917B; --s-soft: #D2D0BF;
+  --s-line: #D0CEC1;
+  --s-display: "Literata", Georgia, serif;
+  --s-body: "Hanken Grotesk", system-ui, sans-serif;
+  --s-mono: "Hanken Grotesk", system-ui, sans-serif;
+  --s-radius: 999px;
+}
+#hlina .hero-copy h3 { font-size: clamp(38px, 5.4vw, 64px); line-height: 1.04; font-weight: 300; font-variation-settings: "opsz" 72; letter-spacing: -0.015em; }
+#hlina .hero-copy h3 i { font-weight: 400; color: var(--s-accent); }
+#hlina .btn { padding-inline: 26px; }
+#hlina .next { font-size: 14px; }
+#hlina .kit small { text-transform: none; letter-spacing: 0; font-size: 12.5px; }
+#hlina .c-display { font-family: "Literata", serif; font-weight: 300; font-variation-settings: "opsz" 72; }
+#hlina .c-display i { font-weight: 400; }
+#hlina .c-body { font-family: "Hanken Grotesk", sans-serif; }
+
+/* ---------- Shared details ---------- */
+.details { padding-block: 48px 72px; border-top: 1px solid var(--line); display: grid; gap: 24px; }
+.details h2 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; }
+.details > p { margin: 0; color: var(--muted); max-width: 64ch; }
+.detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.compare div { min-width: 0; }
+.compare small { display: block; font-family: var(--label); font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+.narrow { width: 100%; max-width: 168px; font-size: 15px; line-height: 1.5; border: 1px dashed var(--line); padding: 8px 10px; border-radius: 4px; }
+.card p { margin: 0; font-size: 15px; }
+.card ul { margin: 0; padding-left: 18px; font-size: 15px; display: grid; gap: 4px; }
+.press-demo { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.demo-btn {
+  font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--line);
+  background: var(--bg); color: var(--fg); padding: 10px 16px; border-radius: 4px;
+}
+.demo-btn.good { transition: transform 160ms var(--ease-out); }
+.demo-btn.good:active { transform: scale(0.97); }
+
+/* ---------- Toast (copy feedback) ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 0); opacity: 1;
+  background: var(--fg); color: var(--bg); font-size: 14px; padding: 10px 16px; border-radius: 6px;
+  transition: transform 260ms var(--ease-out), opacity 200ms ease;
+  pointer-events: none;
+}
+.toast.hide { transform: translate(-50%, 140%); opacity: 0; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; min-height: 0; }
+  .tex-panel { min-height: 200px; }
+  .kit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kit div { border-bottom: 1px solid var(--s-line); }
+  .specs, .detail-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .hero-copy { padding-left: 18px; padding-right: 18px; }
+  .d-head { grid-template-columns: 1fr; }
+  .d-head p, .d-notes { grid-column: 1; }
+  .compare { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn, .swatch, .jump a, .demo-btn.good { transition: background-color 150ms ease; }
+  .btn:active, .swatch:active, .jump a:active, .demo-btn.good:active { transform: none; }
+  .toast { transition: opacity 200ms ease; }
+  .toast.hide { transform: translate(-50%, 0); }
+}
+</style>
+
+<!-- Plaster textures, generated with SVG noise -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Marmorino: long horizontal trowel clouds + fine lime grain -->
+    <filter id="f-vapno" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0035 0.014" numOctaves="4" seed="11" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.62  0 0 0 0 0.64  0 0 0 0 0.62  1.9 0 0 0 -0.78" result="cloud"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.0025 0.02" numOctaves="3" seed="4" result="n2"/>
+      <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0.97  0 0 0 0 0.975  0 0 0 0 0.97  2.2 0 0 0 -1.05" result="shine"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0.3  0 0 0 0 0.31  0 0 0 0 0.3  0.5 0 0 0 -0.2" result="grain"/>
+      <feMerge><feMergeNode in="cloud"/><feMergeNode in="shine"/><feMergeNode in="grain"/></feMerge>
+    </filter>
+    <!-- Concrete: soft mottling, air pores, coarse grain -->
+    <filter id="f-beton" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="8" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.42  0 0 0 0 0.41  0 0 0 0 0.39  1.4 0 0 0 -0.5" result="mottle"/>
+      <feTurbulence type="turbulence" baseFrequency="0.11" numOctaves="1" seed="21" result="p"/>
+      <feColorMatrix in="p" type="matrix" values="0 0 0 0 0.2  0 0 0 0 0.2  0 0 0 0 0.19  -14 0 0 0 1.1" result="pores"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="5" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.25  0 0 0 0 0.24  0.7 0 0 0 -0.28" result="grain"/>
+      <feMerge><feMergeNode in="mottle"/><feMergeNode in="grain"/><feMergeNode in="pores"/></feMerge>
+    </filter>
+    <!-- Clay: soft, warm, hand-smoothed clouds -->
+    <filter id="f-hlina" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="5" seed="2" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.87  0 0 0 0 0.74  0 0 0 0 0.65  1.8 0 0 0 -0.7" result="light"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="9" result="n2"/>
+      <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.38  0 0 0 0 0.3  1.6 0 0 0 -0.75" result="dark"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="1" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0.4  0 0 0 0 0.3  0 0 0 0 0.25  0.45 0 0 0 -0.18" result="grain"/>
+      <feMerge><feMergeNode in="dark"/><feMergeNode in="light"/><feMergeNode in="grain"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<main>
+  <section class="wrap intro">
+    <p class="eyebrow">Stěrkaři · sterkari.cz · visual direction</p>
+    <h1>Three ways Stěrkaři could look</h1>
+    <p>Each direction below is a preview of the homepage in Czech: your header (the same in all three, now with O nás), the hero, and the new O nás section, followed by the colours, fonts and plaster texture. The textures are generated placeholders until the photo shoot. Click a colour to copy its code. Pick one direction, or tell me what to mix.</p>
+    <nav class="jump" aria-label="Directions">
+      <a href="#vapno">A · Vápno</a>
+      <a href="#beton">B · Beton</a>
+      <a href="#hlina">C · Hlína</a>
+    </nav>
+  </section>
+
+  <!-- ================= A ================= -->
+  <section class="wrap direction" id="vapno">
+    <header class="d-head">
+      <span class="d-letter">A</span>
+      <h2>Vápno <span>/ lime</span></h2>
+      <p>Like a well-made workshop manual. Chalky lime white, a wide confident grotesque, and one pigment blue, the way limewash is tinted. Clear, precise and calm.</p>
+      <ul class="d-notes">
+        <li><b>Feels:</b> precise, trustworthy, modern</li>
+        <li><b>Best for:</b> marmorino and smooth finishes</li>
+        <li><b>Risk:</b> can feel cool without warm photos</li>
+      </ul>
+    </header>
+
+    <div class="site">
+      <header class="hdr">
+        <span class="hdr-logo">STĚRKAŘI.</span>
+        <nav class="hdr-nav" aria-label="Hlavní menu (ukázka)">
+          <ul><li>Stěrky</li><li>Workshop</li><li>Jak to funguje</li><li>Inspirace</li><li>O nás</li></ul>
+        </nav>
+        <button class="hdr-cta" type="button">Chci na workshop</button>
+        <button class="hdr-menu" type="button">Menu</button>
+      </header>
+      <div class="hero">
+        <div class="hero-copy">
+          <h3>Stěrku zvládnete <i>sami.</i></h3>
+          <p>Na jednodenním workshopu vás naučíme nanášet, hladit a&nbsp;leštit stěrku. Domů si odnesete nářadí i&nbsp;materiál a&nbsp;pustíte se do toho sami.</p>
+          <div class="cta-row">
+            <button class="btn" type="button">Mám zájem o&nbsp;workshop</button>
+            <span class="next">Nejbližší termín: so 13.&nbsp;3.&nbsp;2027 · Praha<br>2&nbsp;490&nbsp;Kč včetně sady <em>(ukázka)</em></span>
+          </div>
+        </div>
+        <div class="tex-panel" aria-hidden="true">
+          <svg preserveAspectRatio="none"><rect width="100%" height="100%" fill="#DFE0DA"/><rect width="100%" height="100%" filter="url(#f-vapno)"/></svg>
+          <span class="tex-tag">textura · benátský štuk</span>
+        </div>
+      </div>
+      <div class="kit">
+        <div><small>Workshop</small><span>1 den, 6&nbsp;hodin</span></div>
+        <div><small>Skupina</small><span>max. 8 lidí</span></div>
+        <div><small>Sada</small><span>hladítko, špachtle</span></div>
+        <div><small>Materiál</small><span>12&nbsp;kg stěrky</span></div>
+        <div><small>Vrstva</small><span>2–3&nbsp;mm</span></div>
+      </div>
+      <section class="about" aria-label="O nás (ukázka)">
+        <div class="about-head">
+          <span class="about-eyebrow">O nás</span>
+          <h3>Krásná stěrka není jen pro řemeslníky</h3>
+          <div class="about-photo"><span>Fotka týmu · doplníme po focení</span></div>
+        </div>
+        <div class="about-body">
+          <p>Stěrkaři vznikli z&nbsp;jednoduché myšlenky: stěrku na vlastní stěně zvládne každý, kdo ví jak na to. Nemusíte volat firmu ani čekat měsíce na termín.</p>
+          <p>Na workshopu vám ukážeme celý postup a&nbsp;vyzkoušíte si ho vlastníma rukama. Domů odejdete s&nbsp;nářadím, materiálem a&nbsp;jistotou, že to doma dokážete.</p>
+          <ol class="about-steps">
+            <li><b>Naučíme vás to</b><span>Celý postup na jednom workshopu, od podkladu po finální vrstvu.</span></li>
+            <li><b>Vybavíme vás</b><span>Nářadí i&nbsp;materiál dostanete v&nbsp;ceně workshopu.</span></li>
+            <li><b>Zvládnete to sami</b><span>Doma pak stěrku uděláte bez cizí pomoci.</span></li>
+          </ol>
+          <p class="about-sign">[Jména zakladatelů a&nbsp;váš příběh doplníme]</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="specs">
+      <div class="card">
+        <h4>Colours</h4>
+        <div class="swatches">
+          <button class="swatch" type="button" data-hex="#ECEDE8"><i class="chip" style="background:#ECEDE8"></i><div><strong>Vápenné mléko</strong><span>Background</span></div><code>#ECEDE8</code></button>
+          <button class="swatch" type="button" data-hex="#C8CBC3"><i class="chip" style="background:#C8CBC3"></i><div><strong>Hašené vápno</strong><span>Panels, lines</span></div><code>#C8CBC3</code></button>
+          <button class="swatch" type="button" data-hex="#1C2127"><i class="chip" style="background:#1C2127"></i><div><strong>Grafit</strong><span>Text</span></div><code>#1C2127</code></button>
+          <button class="swatch" type="button" data-hex="#2D45A0"><i class="chip" style="background:#2D45A0"></i><div><strong>Ultramarín</strong><span>Buttons, accents</span></div><code>#2D45A0</code></button>
+          <button class="swatch" type="button" data-hex="#DADDE6"><i class="chip" style="background:#DADDE6"></i><div><strong>Modrá běl</strong><span>Highlights</span></div><code>#DADDE6</code></button>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Type · Archivo Expanded + JetBrains Mono</h4>
+        <div class="type-spec">
+          <div class="type-row"><small>Headline · Archivo, wide, 800</small><div class="sample big a-display">Příliš žluťoučký kůň úpěl ďábelské ódy</div></div>
+          <div class="type-row"><small>Capitals</small><div class="sample caps a-display">ĚŠČŘŽÝÁÍÉŮÚŤĎŇ STĚRKAŘI</div></div>
+          <div class="type-row"><small>Body · Archivo, 400</small><div class="sample body-s a-body">Stěrka se nanáší ve dvou až třech tenkých vrstvách. Mezi nimi necháte povrch zavadnout, pak ho hladítkem stáhnete do lesku.</div></div>
+          <div class="type-row"><small>Details · JetBrains Mono</small><div class="sample mono-s a-mono">2&nbsp;490&nbsp;Kč · 13.&nbsp;3.&nbsp;2027 · 2–3&nbsp;mm · 12&nbsp;kg</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= B ================= -->
+  <section class="wrap direction" id="beton">
+    <header class="d-head">
+      <span class="d-letter">B</span>
+      <h2>Beton <span>/ concrete</span></h2>
+      <p>Building-site directness. Tall condensed headlines like formwork stencils, concrete-grey surfaces, and rust as the only warm colour. Says "you can do this" with some muscle.</p>
+      <ul class="d-notes">
+        <li><b>Feels:</b> bold, hands-on, unpretentious</li>
+        <li><b>Best for:</b> concrete-look finishes, a younger audience</li>
+        <li><b>Risk:</b> less inviting for home decorators</li>
+      </ul>
+    </header>
+
+    <div class="site">
+      <header class="hdr">
+        <span class="hdr-logo">STĚRKAŘI.</span>
+        <nav class="hdr-nav" aria-label="Hlavní menu (ukázka)">
+          <ul><li>Stěrky</li><li>Workshop</li><li>Jak to funguje</li><li>Inspirace</li><li>O nás</li></ul>
+        </nav>
+        <button class="hdr-cta" type="button">Chci na workshop</button>
+        <button class="hdr-menu" type="button">Menu</button>
+      </header>
+      <div class="hero">
+        <div class="hero-copy">
+          <h3>Stěrka. <i>Vlastníma</i> rukama.</h3>
+          <p>Na jednodenním workshopu vás naučíme nanášet, hladit a&nbsp;leštit stěrku. Domů si odnesete nářadí i&nbsp;materiál a&nbsp;pustíte se do toho sami.</p>
+          <div class="cta-row">
+            <button class="btn" type="button">Mám zájem o&nbsp;workshop</button>
+            <span class="next">Nejbližší termín: so 13.&nbsp;3.&nbsp;2027 · Praha<br>2&nbsp;490&nbsp;Kč včetně sady <em>(ukázka)</em></span>
+          </div>
+        </div>
+        <div class="tex-panel" aria-hidden="true">
+          <svg preserveAspectRatio="none"><rect width="100%" height="100%" fill="#9C9992"/><rect width="100%" height="100%" filter="url(#f-beton)"/></svg>
+          <span class="tex-tag">textura · betonová stěrka</span>
+        </div>
+      </div>
+      <div class="kit">
+        <div><small>Workshop</small><span>1 den, 6&nbsp;hodin</span></div>
+        <div><small>Skupina</small><span>max. 8 lidí</span></div>
+        <div><small>Sada</small><span>hladítko, špachtle</span></div>
+        <div><small>Materiál</small><span>12&nbsp;kg stěrky</span></div>
+        <div><small>Vrstva</small><span>2–3&nbsp;mm</span></div>
+      </div>
+      <section class="about" aria-label="O nás (ukázka)">
+        <div class="about-head">
+          <span class="about-eyebrow">O nás</span>
+          <h3>Krásná stěrka není jen pro řemeslníky</h3>
+          <div class="about-photo"><span>Fotka týmu · doplníme po focení</span></div>
+        </div>
+        <div class="about-body">
+          <p>Stěrkaři vznikli z&nbsp;jednoduché myšlenky: stěrku na vlastní stěně zvládne každý, kdo ví jak na to. Nemusíte volat firmu ani čekat měsíce na termín.</p>
+          <p>Na workshopu vám ukážeme celý postup a&nbsp;vyzkoušíte si ho vlastníma rukama. Domů odejdete s&nbsp;nářadím, materiálem a&nbsp;jistotou, že to doma dokážete.</p>
+          <ol class="about-steps">
+            <li><b>Naučíme vás to</b><span>Celý postup na jednom workshopu, od podkladu po finální vrstvu.</span></li>
+            <li><b>Vybavíme vás</b><span>Nářadí i&nbsp;materiál dostanete v&nbsp;ceně workshopu.</span></li>
+            <li><b>Zvládnete to sami</b><span>Doma pak stěrku uděláte bez cizí pomoci.</span></li>
+          </ol>
+          <p class="about-sign">[Jména zakladatelů a&nbsp;váš příběh doplníme]</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="specs">
+      <div class="card">
+        <h4>Colours</h4>
+        <div class="swatches">
+          <button class="swatch" type="button" data-hex="#B7B4AD"><i class="chip" style="background:#B7B4AD"></i><div><strong>Pohledový beton</strong><span>Background</span></div><code>#B7B4AD</code></button>
+          <button class="swatch" type="button" data-hex="#8E8B84"><i class="chip" style="background:#8E8B84"></i><div><strong>Mokrý beton</strong><span>Panels, lines</span></div><code>#8E8B84</code></button>
+          <button class="swatch" type="button" data-hex="#191917"><i class="chip" style="background:#191917"></i><div><strong>Asfalt</strong><span>Text, buttons</span></div><code>#191917</code></button>
+          <button class="swatch" type="button" data-hex="#A94E27"><i class="chip" style="background:#A94E27"></i><div><strong>Rez</strong><span>The one accent</span></div><code>#A94E27</code></button>
+          <button class="swatch" type="button" data-hex="#E4E2DC"><i class="chip" style="background:#E4E2DC"></i><div><strong>Cementové mléko</strong><span>Light sections</span></div><code>#E4E2DC</code></button>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Type · Big Shoulders + Schibsted Grotesk + Plex Mono</h4>
+        <div class="type-spec">
+          <div class="type-row"><small>Headline · Big Shoulders Display, 800, capitals</small><div class="sample big b-display">Příliš žluťoučký kůň úpěl ďábelské ódy</div></div>
+          <div class="type-row"><small>Capitals (diacritics on caps)</small><div class="sample caps b-display">ĚŠČŘŽÝÁÍÉŮÚŤĎŇ STĚRKAŘI</div></div>
+          <div class="type-row"><small>Body · Schibsted Grotesk, 400</small><div class="sample body-s b-body">Stěrka se nanáší ve dvou až třech tenkých vrstvách. Mezi nimi necháte povrch zavadnout, pak ho hladítkem stáhnete do lesku.</div></div>
+          <div class="type-row"><small>Details · IBM Plex Mono</small><div class="sample mono-s b-mono">2&nbsp;490&nbsp;Kč · 13.&nbsp;3.&nbsp;2027 · 2–3&nbsp;mm · 12&nbsp;kg</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= C ================= -->
+  <section class="wrap direction" id="hlina">
+    <header class="d-head">
+      <span class="d-letter">C</span>
+      <h2>Hlína <span>/ clay</span></h2>
+      <p>Calm and tactile, for people making a home. A soft stone background, a light literary serif, and clay and olive taken from natural plasters. Slower, warmer, more interior-magazine.</p>
+      <ul class="d-notes">
+        <li><b>Feels:</b> warm, crafted, relaxed</li>
+        <li><b>Best for:</b> clay, lime and tadelakt finishes</li>
+        <li><b>Risk:</b> less "you can do it" energy</li>
+      </ul>
+    </header>
+
+    <div class="site">
+      <header class="hdr">
+        <span class="hdr-logo">STĚRKAŘI.</span>
+        <nav class="hdr-nav" aria-label="Hlavní menu (ukázka)">
+          <ul><li>Stěrky</li><li>Workshop</li><li>Jak to funguje</li><li>Inspirace</li><li>O nás</li></ul>
+        </nav>
+        <button class="hdr-cta" type="button">Chci na workshop</button>
+        <button class="hdr-menu" type="button">Menu</button>
+      </header>
+      <div class="hero">
+        <div class="hero-copy">
+          <h3>Stěny, které jste udělali <i>vlastníma rukama</i></h3>
+          <p>Na jednodenním workshopu vás naučíme nanášet, hladit a&nbsp;leštit stěrku. Domů si odnesete nářadí i&nbsp;materiál a&nbsp;pustíte se do toho sami.</p>
+          <div class="cta-row">
+            <button class="btn" type="button">Mám zájem o&nbsp;workshop</button>
+            <span class="next">Nejbližší termín: so 13.&nbsp;3.&nbsp;2027 · Praha<br>2&nbsp;490&nbsp;Kč včetně sady <em>(ukázka)</em></span>
+          </div>
+        </div>
+        <div class="tex-panel" aria-hidden="true">
+          <svg preserveAspectRatio="none"><rect width="100%" height="100%" fill="#B98C76"/><rect width="100%" height="100%" filter="url(#f-hlina)"/></svg>
+          <span class="tex-tag">textura · hliněná omítka</span>
+        </div>
+      </div>
+      <div class="kit">
+        <div><small>Workshop</small><span>1 den, 6&nbsp;hodin</span></div>
+        <div><small>Skupina</small><span>max. 8 lidí</span></div>
+        <div><small>Sada</small><span>hladítko, špachtle</span></div>
+        <div><small>Materiál</small><span>12&nbsp;kg stěrky</span></div>
+        <div><small>Vrstva</small><span>2–3&nbsp;mm</span></div>
+      </div>
+      <section class="about" aria-label="O nás (ukázka)">
+        <div class="about-head">
+          <span class="about-eyebrow">O nás</span>
+          <h3>Krásná stěrka není jen pro řemeslníky</h3>
+          <div class="about-photo"><span>Fotka týmu · doplníme po focení</span></div>
+        </div>
+        <div class="about-body">
+          <p>Stěrkaři vznikli z&nbsp;jednoduché myšlenky: stěrku na vlastní stěně zvládne každý, kdo ví jak na to. Nemusíte volat firmu ani čekat měsíce na termín.</p>
+          <p>Na workshopu vám ukážeme celý postup a&nbsp;vyzkoušíte si ho vlastníma rukama. Domů odejdete s&nbsp;nářadím, materiálem a&nbsp;jistotou, že to doma dokážete.</p>
+          <ol class="about-steps">
+            <li><b>Naučíme vás to</b><span>Celý postup na jednom workshopu, od podkladu po finální vrstvu.</span></li>
+            <li><b>Vybavíme vás</b><span>Nářadí i&nbsp;materiál dostanete v&nbsp;ceně workshopu.</span></li>
+            <li><b>Zvládnete to sami</b><span>Doma pak stěrku uděláte bez cizí pomoci.</span></li>
+          </ol>
+          <p class="about-sign">[Jména zakladatelů a&nbsp;váš příběh doplníme]</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="specs">
+      <div class="card">
+        <h4>Colours</h4>
+        <div class="swatches">
+          <button class="swatch" type="button" data-hex="#E4E2D7"><i class="chip" style="background:#E4E2D7"></i><div><strong>Kámen</strong><span>Background</span></div><code>#E4E2D7</code></button>
+          <button class="swatch" type="button" data-hex="#D2D0BF"><i class="chip" style="background:#D2D0BF"></i><div><strong>Šalvěj</strong><span>Panels, lines</span></div><code>#D2D0BF</code></button>
+          <button class="swatch" type="button" data-hex="#2A2922"><i class="chip" style="background:#2A2922"></i><div><strong>Rašelina</strong><span>Text</span></div><code>#2A2922</code></button>
+          <button class="swatch" type="button" data-hex="#5A5D2C"><i class="chip" style="background:#5A5D2C"></i><div><strong>Olivová</strong><span>Buttons, accents</span></div><code>#5A5D2C</code></button>
+          <button class="swatch" type="button" data-hex="#C4917B"><i class="chip" style="background:#C4917B"></i><div><strong>Pálená hlína</strong><span>Texture, images</span></div><code>#C4917B</code></button>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Type · Literata + Hanken Grotesk</h4>
+        <div class="type-spec">
+          <div class="type-row"><small>Headline · Literata Display, 300</small><div class="sample big c-display">Příliš žluťoučký kůň <i>úpěl ďábelské ódy</i></div></div>
+          <div class="type-row"><small>Capitals</small><div class="sample caps c-display">ĚŠČŘŽÝÁÍÉŮÚŤĎŇ STĚRKAŘI</div></div>
+          <div class="type-row"><small>Body · Hanken Grotesk, 400</small><div class="sample body-s c-body">Stěrka se nanáší ve dvou až třech tenkých vrstvách. Mezi nimi necháte povrch zavadnout, pak ho hladítkem stáhnete do lesku.</div></div>
+          <div class="type-row"><small>Details · Hanken Grotesk, 500</small><div class="sample mono-s c-body" style="font-weight:500">2&nbsp;490&nbsp;Kč · 13.&nbsp;3.&nbsp;2027 · 2–3&nbsp;mm · 12&nbsp;kg</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Shared ================= -->
+  <section class="wrap details">
+    <p class="eyebrow">Whichever direction you choose</p>
+    <h2>Details every version gets</h2>
+    <p>Most of what separates a crafted site from a generated one is invisible until it's missing. These apply to A, B or C.</p>
+    <div class="detail-grid">
+      <div class="card">
+        <h4>Czech line breaks</h4>
+        <div class="compare">
+          <div><small>Without fix</small><div class="narrow">Domů si odnesete nářadí i materiál a pustíte se do toho.</div></div>
+          <div><small>With fix</small><div class="narrow">Domů si odnesete nářadí i&nbsp;materiál a&nbsp;pustíte se do toho.</div></div>
+        </div>
+        <p style="margin-top:12px">Single-letter words (a, i, k, o, s, u, v, z) never end a line. The site adds this automatically.</p>
+      </div>
+      <div class="card">
+        <h4>Press feedback</h4>
+        <p>Buttons shrink slightly while pressed, so the site feels like it heard you. Press and hold both:</p>
+        <div class="press-demo">
+          <button class="demo-btn" type="button">Bez odezvy</button>
+          <button class="demo-btn good" type="button">S odezvou</button>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Czech formats</h4>
+        <ul>
+          <li>Prices: <b>2&nbsp;490&nbsp;Kč</b>, never 2,490 CZK</li>
+          <li>Dates: <b>so 13.&nbsp;3.&nbsp;2027</b></li>
+          <li>Ranges with an en dash: <b>2–3&nbsp;mm</b></li>
+          <li>Czech quotes: <b>„stěrka“</b></li>
+          <li>Motion kept short; reduced for anyone who asks their device for less</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast hide" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  var toast = document.getElementById('toast');
+  var timer;
+  function show(msg) {
+    toast.textContent = msg;
+    toast.classList.remove('hide');
+    clearTimeout(timer);
+    timer = setTimeout(function () { toast.classList.add('hide'); }, 1800);
+  }
+  document.querySelectorAll('.swatch').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var hex = b.getAttribute('data-hex');
+      var name = b.querySelector('strong').textContent;
+      try {
+        navigator.clipboard.writeText(hex).then(
+          function () { show(name + ' ' + hex + ' copied'); },
+          function () { show(name + ': ' + hex); }
+        );
+      } catch (e) { show(name + ': ' + hex); }
+    });
+  });
+})();
+</script>

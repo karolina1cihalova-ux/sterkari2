@@ -1,0 +1,32 @@
+---
+import Wall from './Wall.astro';
+
+const points = [
+  { title: 'Naučíme vás to', text: 'Celý postup na jednom workshopu, od podkladu po finální vrstvu.' },
+  { title: 'Vybavíme vás', text: 'Stěrku, nářadí a vzorky vám připravíme na míru vaší stěně.' },
+  { title: 'Zvládnete to sami', text: 'A když se doma zaseknete, jsme na telefonu.' },
+];
+---
+<section class="py-24 max-[900px]:py-[72px]" id="o-nas">
+  <div class="wrap grid items-start gap-9 min-[901px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] min-[901px]:gap-14">
+    <div class="relative aspect-[16/10] max-w-full overflow-hidden rounded-card min-[901px]:aspect-[4/5]" aria-hidden="true">
+      <Wall shade="#C4785A" structure="hlinena" />
+      <span class="wall-tag">Místo pro fotku týmu</span>
+    </div>
+    <div class="grid min-w-0 gap-[18px] text-[17px]">
+      <h2 class="text-[clamp(30px,3.6vw,40px)] leading-[1.1] font-bold tracking-[-0.02em]">Krásná stěrka není jen pro řemeslníky</h2>
+      <p>Stěrkaři vznikli z&nbsp;jednoduché myšlenky: stěrku na vlastní stěně zvládne každý, kdo ví, jak na to. Nemusíte volat firmu ani čekat měsíce na volný termín.</p>
+      <p>Na workshopu vám ukážeme celý postup a&nbsp;vyzkoušíte si ho vlastníma rukama. Domů odejdete s&nbsp;materiálem, nářadím a&nbsp;jistotou, že to doma dokážete.</p>
+      <ul class="m-0 mt-2 list-none border-t border-line p-0">
+        {points.map((p) => (
+          <li class="grid gap-0.5 border-b border-line py-4 text-[15.5px] min-[561px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)] min-[561px]:gap-4">
+            <b class="text-ink">{p.title}</b><span>{p.text}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="rounded-lg border border-dashed border-[#d3ccc1] px-3.5 py-3 text-sm text-muted">
+        Sem doplníme vaše jména, fotku a&nbsp;krátký příběh, proč jste Stěrkaře založili.
+      </p>
+    </div>
+  </div>
+</section>

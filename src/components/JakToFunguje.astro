@@ -1,0 +1,25 @@
+---
+const steps = [
+  { title: 'Rezervace workshopu', text: 'Vyplníte krátký formulář, domluvíme termín ve showroomu a pošleme vám potvrzení e-mailem.' },
+  { title: 'Příprava materiálu', text: 'Sestavíme balíček stěrky, nářadí a vzorků podle vašeho odstínu. Všechno je připravené na den workshopu.' },
+  { title: 'Den ve showroomu', text: 'V malé skupině projdete přípravu podkladu, nanášení, broušení a finální úpravu na cvičné ploše.' },
+  { title: 'Aplikace doma', text: 'Na vlastní stěně to zvládnete sami, s postupem z workshopu a možností konzultace, když něco nejde podle plánu.' },
+];
+---
+<section class="bg-paper py-24 max-[900px]:py-[72px]" id="jak-to-funguje">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Jak to funguje</h2>
+      <p>Od prvního dotazu po hotovou stěnu u&nbsp;vás doma. Jednoduchý postup ve čtyřech krocích.</p>
+    </div>
+    <ol class="m-0 grid list-none grid-cols-1 gap-8 p-0 min-[561px]:grid-cols-2 min-[901px]:grid-cols-4">
+      {steps.map((step, i) => (
+        <li class="grid min-w-0 content-start gap-2.5 border-t-2 border-ink pt-5">
+          <span class="text-[40px] leading-none font-bold tracking-[-0.02em] text-accent tabular-nums">{i + 1}</span>
+          <h3 class="text-lg font-bold">{step.title}</h3>
+          <p class="text-[15px]">{step.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

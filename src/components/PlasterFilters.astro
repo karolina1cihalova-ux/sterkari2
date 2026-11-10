@@ -1,0 +1,66 @@
+<!-- Plaster structures: each filter draws only light and shadow; the shade is the colour underneath. -->
+<svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="t-benatsky" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0035 0.018" numOctaves="4" seed="11" result="a" />
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.7 0 0 0 0.92" result="lo" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.0025 0.022" numOctaves="3" seed="4" result="b" />
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  2.4 0 0 0 -1.12" result="hi" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="g" />
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.32 0 0 0 -0.11" result="gr" />
+      <feMerge><feMergeNode in="lo" /><feMergeNode in="hi" /><feMergeNode in="gr" /></feMerge>
+    </filter>
+    <filter id="t-beton" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="8" result="a" />
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.2 0 0 0 0.68" result="lo" />
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.1 0 0 0 -0.56" result="hi" />
+      <feTurbulence type="turbulence" baseFrequency="0.11" numOctaves="1" seed="21" result="p" />
+      <feColorMatrix in="p" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -10 0 0 0 0.75" result="pores" />
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="5" result="g" />
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.6 0 0 0 -0.24" result="gr" />
+      <feMerge><feMergeNode in="lo" /><feMergeNode in="hi" /><feMergeNode in="gr" /><feMergeNode in="pores" /></feMerge>
+    </filter>
+    <filter id="t-mikrocement" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.005 0.008" numOctaves="3" seed="5" result="a" />
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.1 0 0 0 0.6" result="lo" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.006" numOctaves="3" seed="13" result="b" />
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -0.78" result="hi" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="7" result="g" />
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.4 0 0 0 -0.15" result="gr" />
+      <feMerge><feMergeNode in="lo" /><feMergeNode in="hi" /><feMergeNode in="gr" /></feMerge>
+    </filter>
+    <filter id="t-vapenna" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.009" numOctaves="5" seed="2" result="a" />
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.4 0 0 0 0.74" result="lo" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="6" result="b" />
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.3 0 0 0 -0.66" result="hi" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="1" result="g" />
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.42 0 0 0 -0.16" result="gr" />
+      <feMerge><feMergeNode in="lo" /><feMergeNode in="hi" /><feMergeNode in="gr" /></feMerge>
+    </filter>
+    <filter id="t-tadelakt" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.007 0.01" numOctaves="4" seed="3" result="a" />
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.6 0 0 0 0.84" result="lo" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.005 0.012" numOctaves="3" seed="17" result="b" />
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  2.6 0 0 0 -1.28" result="hi" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="9" result="g" />
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0 0 0 -0.1" result="gr" />
+      <feMerge><feMergeNode in="lo" /><feMergeNode in="hi" /><feMergeNode in="gr" /></feMerge>
+    </filter>
+    <filter id="t-hlinena" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="9" result="a" />
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.0 0 0 0 0.56" result="lo" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" seed="1" result="s" />
+      <feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.3 0 0 0 -0.56" result="sd" />
+      <feColorMatrix in="s" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -1.3 0 0 0 0.6" result="sl" />
+      <feMerge><feMergeNode in="lo" /><feMergeNode in="sd" /><feMergeNode in="sl" /></feMerge>
+    </filter>
+    <filter id="t-plain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="4" result="a" />
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.5 0 0 0 0.28" result="lo" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="2" result="g" />
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.25 0 0 0 -0.08" result="gr" />
+      <feMerge><feMergeNode in="lo" /><feMergeNode in="gr" /></feMerge>
+    </filter>
+  </defs>
+</svg>

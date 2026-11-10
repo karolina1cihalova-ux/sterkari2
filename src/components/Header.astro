@@ -1,0 +1,130 @@
+---
+import { NAV } from '../data/sterky';
+---
+<header id="hdr" class="hdr sticky z-50 border-b border-transparent bg-white/95 backdrop-blur-md backdrop-saturate-[1.2] transition-colors duration-200 [&.scrolled]:border-line">
+  <div class="hdr-in wrap grid min-h-[73px] grid-cols-[1fr_auto_1fr] items-center gap-6 py-3 max-[560px]:grid-cols-[1fr_auto_auto] max-[560px]:gap-2 max-[360px]:gap-1.5">
+    <a class="justify-self-start text-[21.6px] font-extrabold tracking-[-0.04em] text-black no-underline" href="#top">STĚRKAŘI.</a>
+
+    <nav class="hdr-nav" aria-label="Hlavní menu">
+      <ul class="m-0 flex list-none items-center p-0">
+        {NAV.map((item, i) => (
+          <li class="flex items-center">
+            {i > 0 && <span class="mx-3 font-normal text-[#a1a1a1]" aria-hidden="true">·</span>}
+            <a class="menu-label mr-[-0.2em] transition-colors duration-150 hover:text-accent" href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <button
+      class="burger hidden size-11 cursor-pointer place-items-center rounded-full border border-[#ddd7cd] bg-transparent text-black hover:border-black max-[360px]:size-[38px]"
+      id="burger"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menuPanel"
+      aria-label="Otevřít menu"
+    >
+      <span></span><span></span>
+    </button>
+
+    <a class="btn btn-dark justify-self-end py-3 max-[420px]:px-4 max-[360px]:px-3 max-[360px]:tracking-normal" href="#kontakt">Chci na workshop</a>
+  </div>
+
+  <nav class="menu-panel absolute inset-x-0 top-full border-b border-line bg-white shadow-[0_24px_40px_-28px_rgba(26,26,26,0.35)]" id="menuPanel" aria-label="Menu">
+    <ul class="m-0 grid list-none justify-items-center p-0 pt-2 pb-5">
+      {NAV.map((item) => (
+        <li><a class="menu-label block px-6 py-3.5 mr-[-0.2em] hover:text-accent" href={item.href}>{item.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .hdr { top: env(safe-area-inset-top, 0px); }
+
+  /* Full menu whenever it fits; the script adds .compact only when it doesn't */
+  .hdr:not(.compact) .hdr-in { display: flex; justify-content: space-between; } /* equal space logo ↔ menu ↔ button */
+  .hdr:not(.compact) .menu-panel { display: none; }
+  .hdr.compact .hdr-nav { display: none; }
+  .hdr.compact .burger { display: inline-grid; }
+
+  /* Burger: two lines that morph into an ✕ */
+  .burger { transition: transform 160ms var(--ease-out-strong), border-color 180ms ease; }
+  .burger:active { transform: scale(0.95); }
+  .burger span { grid-area: 1 / 1; width: 18px; height: 2px; border-radius: 2px; background: currentColor; transition: transform 250ms var(--ease-out-strong); }
+  .burger span:first-child { transform: translateY(-4px); }
+  .burger span:last-child { transform: translateY(4px); }
+  .burger[aria-expanded='true'] span:first-child { transform: rotate(45deg); }
+  .burger[aria-expanded='true'] span:last-child { transform: rotate(-45deg); }
+
+  /* Dropdown: revealed from the top edge, links follow in a short stagger */
+  .menu-panel {
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+    transition: clip-path 280ms var(--ease-out-strong), visibility 0s linear 280ms;
+  }
+  .menu-panel.open { clip-path: inset(0 0 -40px 0); visibility: visible; transition: clip-path 280ms var(--ease-out-strong), visibility 0s; }
+  .menu-panel a { opacity: 0; transform: translateY(-6px); transition: opacity 200ms ease, transform 250ms var(--ease-out-strong), color 150ms ease; }
+  .menu-panel.open a { opacity: 1; transform: none; }
+  .menu-panel.open li:nth-child(2) a { transition-delay: 30ms; }
+  .menu-panel.open li:nth-child(3) a { transition-delay: 60ms; }
+  .menu-panel.open li:nth-child(4) a { transition-delay: 90ms; }
+  .menu-panel.open li:nth-child(5) a { transition-delay: 120ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-panel, .menu-panel.open, .burger span { transition: none; }
+    .menu-panel a { transform: none; transition: opacity 150ms ease; }
+    .burger:active { transform: none; }
+  }
+</style>
+
+<script>
+  const hdr = document.getElementById('hdr')!;
+  const hdrIn = hdr.querySelector<HTMLElement>('.hdr-in')!;
+  const navUl = hdr.querySelector<HTMLElement>('.hdr-nav ul')!;
+  const logo = hdr.querySelector<HTMLElement>('.hdr-in > a')!;
+  const cta = hdr.querySelector<HTMLElement>('.hdr-in > .btn')!;
+  const burger = document.getElementById('burger')!;
+  const panel = document.getElementById('menuPanel')!;
+  const MIN_GAP = 40;
+
+  // Thin border once the page scrolls
+  const onScroll = () => hdr.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Hamburger
+  const setMenu = (open: boolean) => {
+    panel.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? 'Zavřít menu' : 'Otevřít menu');
+  };
+  burger.addEventListener('click', () => setMenu(!panel.classList.contains('open')));
+  panel.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setMenu(false); });
+  document.addEventListener('click', (e) => {
+    if (panel.classList.contains('open') && !(e.target as HTMLElement).closest('#hdr')) setMenu(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel.classList.contains('open')) { setMenu(false); burger.focus(); }
+  });
+
+  // Switch to the hamburger only when logo + menu + button no longer fit with breathing room
+  const fitHeader = () => {
+    const wasCompact = hdr.classList.contains('compact');
+    hdr.classList.remove('compact'); // measure the full layout (same frame, never painted)
+    const cs = getComputedStyle(hdrIn);
+    const avail = hdrIn.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const need = logo.offsetWidth + navUl.scrollWidth + cta.offsetWidth + MIN_GAP * 2;
+    const compact = need > avail;
+    hdr.classList.toggle('compact', compact);
+    if (wasCompact && !compact) setMenu(false);
+  };
+  let queued = false;
+  window.addEventListener('resize', () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; fitHeader(); });
+  });
+  fitHeader();
+  document.fonts?.ready.then(fitHeader);
+</script>

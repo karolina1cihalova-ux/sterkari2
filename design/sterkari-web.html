@@ -1,0 +1,941 @@
+<title>Stěrkaři</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..900&display=swap">
+<style>
+/* Layout: the existing Stěrkaři site (DM Sans, paper/white alternating bands, terracotta accent), rebuilt with generated plaster textures and Emil Kowalski-style interaction details. Single light theme by choice, matching the brand. */
+:root {
+  --paper: #F7F4EF;
+  --white: #FFFFFF;
+  --ink: #1A1A1A;
+  --text: #525252;
+  --muted: #8C8780;
+  --line: #E6E1D8;
+  --accent: #C45C26;
+  --accent-soft: #F1E2D7;
+  --font: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius: 10px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --hdr-h: 73px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--white); color: var(--text);
+  font-family: var(--font); font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--white); }
+h1, h2, h3, h4 { color: var(--ink); margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; }
+button { font: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+.band { padding-block: 96px; scroll-margin-top: var(--hdr-h); }
+.band.paper { background: var(--paper); }
+.sec-head { display: grid; gap: 10px; margin-bottom: 44px; max-width: 640px; }
+.sec-head h2 { font-size: clamp(30px, 3.6vw, 40px); line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; }
+.sec-head p { font-size: 17px; }
+.note { font-size: 13px; color: var(--muted); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-weight: 600; font-size: 12px; letter-spacing: 0.025em; text-transform: uppercase; text-decoration: none;
+  border-radius: 999px; padding: 14px 32px; cursor: pointer; border: 1px solid transparent;
+  transition: transform 160ms var(--ease-out), background-color 180ms ease, box-shadow 200ms ease, border-color 180ms ease;
+}
+.btn:active { transform: scale(0.97); }
+.btn-dark { background: var(--ink); color: #fff; box-shadow: 0 4px 6px -1px rgba(26,26,26,0.15), 0 2px 4px -2px rgba(26,26,26,0.15); }
+.btn-line { background: transparent; color: var(--ink); border-color: #CFC9BF; }
+@media (hover: hover) and (pointer: fine) {
+  .btn-dark:hover { background: #333; }
+  .btn-line:hover { border-color: var(--ink); }
+}
+
+/* ---------- Header (copied from the existing site) ---------- */
+.hdr {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50;
+  background: rgba(255,255,255,0.94); backdrop-filter: saturate(1.2) blur(10px); -webkit-backdrop-filter: saturate(1.2) blur(10px);
+  border-bottom: 1px solid transparent; transition: border-color 200ms ease;
+}
+.hdr.scrolled { border-bottom-color: var(--line); }
+.hdr-in { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; min-height: var(--hdr-h); padding-block: 12px; }
+.hdr-logo { font-weight: 800; font-size: 21.6px; letter-spacing: -0.04em; color: #000; text-decoration: none; justify-self: start; }
+.hdr-nav ul { list-style: none; display: flex; align-items: center; margin: 0; padding: 0; }
+.hdr-nav li + li::before { content: "·"; margin: 0 12px; color: #A1A1A1; font-weight: 400; }
+.hdr-nav a { margin-right: -0.2em; } /* cancel trailing letter-spacing so the menu is optically centred */
+.hdr-nav a {
+  font-weight: 900; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #000; text-decoration: none; white-space: nowrap;
+  transition: color 150ms ease;
+}
+@media (hover: hover) and (pointer: fine) { .hdr-nav a:hover { color: var(--accent); } }
+.hdr .btn { justify-self: end; padding: 12px 32px; }
+
+/* Hamburger (narrow screens only) */
+.hdr .btn { white-space: nowrap; }
+.burger {
+  display: none; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  background: transparent; border: 1px solid #DDD7CD; cursor: pointer; color: #000;
+  transition: transform 160ms var(--ease-out), border-color 180ms ease;
+}
+.burger:active { transform: scale(0.95); }
+@media (hover: hover) and (pointer: fine) { .burger:hover { border-color: #000; } }
+.burger span { grid-area: 1 / 1; width: 18px; height: 2px; border-radius: 2px; background: currentColor; transition: transform 250ms var(--ease-out); }
+.burger span:first-child { transform: translateY(-4px); }
+.burger span:last-child { transform: translateY(4px); }
+.burger[aria-expanded="true"] span:first-child { transform: rotate(45deg); }
+.burger[aria-expanded="true"] span:last-child { transform: rotate(-45deg); }
+
+/* Dropdown menu: drops from under the header, links centred */
+.menu-panel {
+  position: absolute; left: 0; right: 0; top: 100%; background: var(--white);
+  border-bottom: 1px solid var(--line); box-shadow: 0 24px 40px -28px rgba(26,26,26,0.35);
+  clip-path: inset(0 0 100% 0); visibility: hidden;
+  transition: clip-path 280ms var(--ease-out), visibility 0s linear 280ms;
+}
+.menu-panel.open { clip-path: inset(0 0 -40px 0); visibility: visible; transition: clip-path 280ms var(--ease-out), visibility 0s; }
+.menu-panel ul { list-style: none; margin: 0; padding: 8px 0 20px; display: grid; justify-items: center; }
+.menu-panel a {
+  display: block; padding: 14px 24px; font-weight: 900; font-size: 12px; letter-spacing: 0.2em; margin-right: -0.2em;
+  text-transform: uppercase; color: #000; text-decoration: none;
+  opacity: 0; transform: translateY(-6px); transition: opacity 200ms ease, transform 250ms var(--ease-out), color 150ms ease;
+}
+.menu-panel.open a { opacity: 1; transform: none; }
+.menu-panel.open li:nth-child(2) a { transition-delay: 30ms; }
+.menu-panel.open li:nth-child(3) a { transition-delay: 60ms; }
+.menu-panel.open li:nth-child(4) a { transition-delay: 90ms; }
+.menu-panel.open li:nth-child(5) a { transition-delay: 120ms; }
+@media (hover: hover) and (pointer: fine) { .menu-panel a:hover { color: var(--accent); } }
+/* Full menu whenever it fits (script adds .compact only when it doesn't) */
+.hdr:not(.compact) .menu-panel { display: none; }
+.hdr:not(.compact) .hdr-in { display: flex; justify-content: space-between; } /* equal space logo ↔ menu ↔ button */
+
+/* ---------- Plaster surfaces ---------- */
+.wall { display: block; width: 100%; height: 100%; }
+.wall rect + rect { opacity: 0.5; }
+.compare .before rect + rect { opacity: 0.7; }
+
+/* ---------- Hero ---------- */
+.hero { background: var(--paper); padding-block: 72px 0; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.hero h1 { font-size: clamp(40px, 5vw, 60px); line-height: 1.02; font-weight: 700; letter-spacing: -0.03em; }
+.hero h1 span { display: block; color: var(--accent); }
+.hero-copy { display: grid; gap: 26px; min-width: 0; }
+.hero-copy p { font-size: 19px; line-height: 1.55; max-width: 34em; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.hero-wall {
+  position: relative; aspect-ratio: 5 / 4; max-width: 100%; border-radius: var(--radius); overflow: hidden;
+  box-shadow: 0 30px 60px -36px rgba(80, 60, 40, 0.45);
+  animation: trowel 1100ms var(--ease-in-out) 150ms both;
+}
+@keyframes trowel { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.wall-tag {
+  position: absolute; left: 14px; bottom: 14px; background: rgba(255,255,255,0.92); color: var(--ink);
+  font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+}
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 64px; border-top: 1px solid var(--line); }
+.facts div { padding: 22px 20px 26px 0; display: grid; gap: 2px; min-width: 0; }
+.facts b { color: var(--ink); font-size: 17px; font-weight: 700; }
+.facts span { font-size: 14px; }
+
+/* ---------- Stěrky explorer ---------- */
+.tabs-scroll { overflow-x: auto; margin: 0 -4px 32px; padding: 4px; scrollbar-width: none; }
+.tabs-scroll::-webkit-scrollbar { display: none; }
+.tabs { position: relative; display: inline-flex; gap: 4px; background: var(--paper); border-radius: 999px; padding: 4px; }
+.tab-ind {
+  position: absolute; top: 4px; bottom: 4px; left: 0; border-radius: 999px; background: var(--ink);
+  transition: transform 300ms var(--ease-out), width 300ms var(--ease-out);
+}
+.tab {
+  position: relative; z-index: 1; border: 0; background: transparent; cursor: pointer; white-space: nowrap;
+  padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--ink);
+  transition: color 200ms ease, transform 160ms var(--ease-out);
+}
+.tab:active { transform: scale(0.97); }
+.tab[aria-selected="true"] { color: #fff; }
+.explorer { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+.preview { position: relative; aspect-ratio: 4 / 3; max-width: 100%; border-radius: var(--radius); overflow: hidden; background: #ddd; }
+.info { display: grid; gap: 22px; min-width: 0; }
+.info h3 { font-size: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; }
+.info h3 small { display: block; font-size: 16px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-top: 6px; }
+.info .desc { font-size: 16.5px; }
+.attrs { display: grid; grid-template-columns: auto 1fr; gap: 8px 20px; margin: 0; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 14.5px; }
+.attrs dt { color: var(--muted); }
+.attrs dd { margin: 0; color: var(--ink); font-weight: 500; }
+.dots { display: inline-flex; gap: 4px; vertical-align: middle; margin-right: 8px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--accent); }
+.shade-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.shades { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.shade { border: 0; background: transparent; padding: 0; cursor: pointer; display: grid; gap: 6px; text-align: left; transition: transform 160ms var(--ease-out); }
+.shade:active { transform: scale(0.96); }
+.shade .sw { aspect-ratio: 1; border-radius: 8px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); outline: 2px solid transparent; outline-offset: 2px; transition: outline-color 180ms ease; }
+.shade[aria-pressed="true"] .sw { outline-color: var(--accent); }
+.shade span { font-size: 11.5px; line-height: 1.25; color: var(--text); }
+.explorer-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+/* ---------- Steps ---------- */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+.steps li { display: grid; gap: 10px; align-content: start; padding-top: 20px; border-top: 2px solid var(--ink); min-width: 0; }
+.steps .num { font-size: 40px; line-height: 1; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.steps h3 { font-size: 18px; font-weight: 700; }
+.steps p { font-size: 15px; }
+
+/* ---------- Workshop ---------- */
+.ws { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+.checks { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; }
+.checks li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; color: var(--ink); font-size: 15.5px; }
+.checks svg { margin-top: 4px; }
+.take { background: var(--paper); border-radius: var(--radius); padding: 28px; display: grid; gap: 16px; }
+.take h3 { font-size: 20px; font-weight: 700; }
+.take ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.take li { padding-left: 18px; position: relative; font-size: 15.5px; color: var(--ink); }
+.take li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.take .when { font-size: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+
+/* ---------- Inspirace ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.pill {
+  border: 1px solid #D9D3C9; background: var(--white); color: var(--ink); cursor: pointer; border-radius: 999px;
+  padding: 8px 18px; font-size: 14px; font-weight: 600;
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 160ms var(--ease-out);
+}
+.pill:active { transform: scale(0.97); }
+.pill[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.compare { position: relative; aspect-ratio: 16 / 7; max-width: 100%; border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; touch-action: pan-y; }
+.compare .layer { position: absolute; inset: 0; }
+.compare .after { clip-path: inset(0 0 0 50%); }
+.compare .handle { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background: #fff; pointer-events: none; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); }
+.compare .knob {
+  position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
+  background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.18); display: grid; place-items: center; color: var(--ink);
+}
+.compare input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+.compare .lbl { position: absolute; top: 14px; background: rgba(255,255,255,0.92); color: var(--ink); font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; pointer-events: none; }
+.compare .lbl.l { left: 14px; } .compare .lbl.r { right: 14px; }
+.compare-cap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; margin-bottom: 36px; }
+.compare-cap b { color: var(--ink); }
+.grid-insp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.card {
+  border: 0; padding: 0; background: transparent; text-align: left; cursor: pointer; display: grid; gap: 10px;
+  transition: transform 160ms var(--ease-out);
+}
+.card:active { transform: scale(0.98); }
+.card .ph { position: relative; aspect-ratio: 4 / 3; max-width: 100%; border-radius: var(--radius); overflow: hidden; outline: 2px solid transparent; outline-offset: 3px; transition: outline-color 180ms ease; }
+.card[aria-current="true"] .ph { outline-color: var(--accent); }
+.card .room { position: absolute; left: 12px; top: 12px; background: rgba(255,255,255,0.92); color: var(--ink); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+.card b { color: var(--ink); font-size: 15.5px; font-weight: 600; }
+.card small { font-size: 13px; color: var(--muted); }
+
+/* ---------- O nás ---------- */
+.about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 56px; align-items: start; }
+.about-photo { aspect-ratio: 4 / 5; max-width: 100%; border-radius: var(--radius); overflow: hidden; position: relative; }
+.about-photo .wall-tag { background: rgba(255,255,255,0.92); }
+.about-body { display: grid; gap: 18px; min-width: 0; font-size: 17px; }
+.about-body h2 { font-size: clamp(30px, 3.6vw, 40px); line-height: 1.1; letter-spacing: -0.02em; }
+.about-steps { list-style: none; margin: 8px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.about-steps li { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 15.5px; }
+.about-steps b { color: var(--ink); }
+.placeholder { font-size: 14px; color: var(--muted); border: 1px dashed #D3CCC1; border-radius: 8px; padding: 12px 14px; }
+
+/* ---------- FAQ ---------- */
+.faq { max-width: 820px; border-top: 1px solid var(--line); }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-q {
+  width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 20px; text-align: left;
+  background: transparent; border: 0; padding: 22px 0; cursor: pointer; color: var(--ink); font-size: 18px; font-weight: 600;
+}
+.faq-q .ic { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1px solid #D9D3C9; display: grid; place-items: center; transition: transform 250ms var(--ease-out), background-color 200ms ease, border-color 200ms ease; }
+.faq-q[aria-expanded="true"] .ic { transform: rotate(45deg); background: var(--ink); border-color: var(--ink); color: #fff; }
+.faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 250ms var(--ease-out); }
+.faq-a > div { overflow: hidden; }
+.faq-a p { padding: 0 48px 22px 0; font-size: 16px; }
+.faq-q[aria-expanded="true"] + .faq-a { grid-template-rows: 1fr; }
+
+/* ---------- Kontakt ---------- */
+.contact { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 56px; align-items: start; }
+.showroom { margin-top: 28px; display: grid; gap: 4px; padding: 22px; border-radius: var(--radius); background: var(--white); }
+.showroom b { color: var(--ink); font-size: 17px; }
+.form { background: var(--white); border-radius: var(--radius); padding: 32px; display: grid; gap: 18px; box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.field label i { font-style: normal; font-weight: 400; color: var(--muted); }
+.field input, .field select, .field textarea {
+  font: inherit; font-size: 16px; color: var(--ink); background: var(--white);
+  border: 1px solid #DAD4CA; border-radius: 8px; padding: 12px 14px; width: 100%;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.field textarea { min-height: 110px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(26,26,26,0.08); }
+.field.err input { border-color: var(--accent); }
+.field .msg { font-size: 13px; color: var(--accent); min-height: 0; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.chosen { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; background: var(--paper); font-size: 14px; color: var(--ink); }
+.chosen .sw { width: 34px; height: 34px; border-radius: 6px; overflow: hidden; flex: none; }
+.chosen button { margin-left: auto; background: transparent; border: 0; color: var(--muted); cursor: pointer; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+.form .btn { justify-self: start; }
+.form .note a { color: var(--text); }
+
+/* ---------- Footer ---------- */
+.foot { background: var(--ink); color: #BDB8B0; padding-block: 56px 40px; font-size: 14px; }
+.foot-in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; align-items: flex-start; }
+.foot .hdr-logo { color: #fff; }
+.foot ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.foot a { color: #E9E5DE; text-decoration: none; font-weight: 600; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; }
+.foot .small { width: 100%; padding-top: 24px; border-top: 1px solid #333; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 90;
+  transform: translate(-50%, 0); opacity: 1; max-width: calc(100% - 32px);
+  background: var(--ink); color: #fff; font-size: 14.5px; padding: 12px 18px; border-radius: 10px;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.4);
+  transition: transform 400ms var(--ease-out), opacity 300ms ease;
+}
+.toast.hide { transform: translate(-50%, 160%); opacity: 0; pointer-events: none; transition-duration: 220ms, 180ms; }
+
+/* ---------- Responsive ---------- */
+/* Narrower screens: logo stays left, button stays right, the links move into a centred hamburger menu */
+.hdr.compact .hdr-nav { display: none; }
+.hdr.compact .burger { display: inline-grid; }
+/* Phones: no room to centre the burger, so it sits just left of the button */
+@media (max-width: 560px) {
+  .hdr-in { grid-template-columns: 1fr auto auto; gap: 8px; }
+}
+@media (max-width: 420px) {
+  .hdr .btn { padding: 12px 16px; }
+}
+@media (max-width: 360px) {
+  .hdr-in { gap: 6px; }
+  .hdr .btn { padding: 11px 12px; letter-spacing: 0; }
+  .burger { width: 38px; height: 38px; }
+}
+@media (max-width: 900px) {
+  .band { padding-block: 72px; }
+  .hero-grid, .explorer, .ws, .about, .contact { grid-template-columns: 1fr; gap: 36px; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-insp { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .compare { aspect-ratio: 4 / 3; }
+  .about-photo { aspect-ratio: 16 / 10; }
+}
+@media (max-width: 560px) {
+  .hero { padding-top: 48px; }
+  .shades { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .steps, .grid-insp, .checks, .two { grid-template-columns: 1fr; }
+  .about-steps li { grid-template-columns: 1fr; gap: 2px; }
+  .form { padding: 22px; }
+  .faq-a p { padding-right: 0; }
+  .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-wall { animation: none; }
+  .btn:active, .tab:active, .shade:active, .pill:active, .card:active { transform: none; }
+  .toast { transition: opacity 200ms ease; }
+  .menu-panel, .menu-panel.open { transition: none; }
+  .menu-panel a { transform: none; transition: opacity 150ms ease; }
+  .burger span { transition: none; }
+  .toast.hide { transform: translate(-50%, 0); }
+  .tab-ind { transition: none; }
+}
+</style>
+
+<!-- Plaster structures: each filter draws only light and shadow; the shade is the colour underneath -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="t-benatsky" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.0035 0.018" numOctaves="4" seed="11" result="a"/>
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.7 0 0 0 0.92" result="lo"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.0025 0.022" numOctaves="3" seed="4" result="b"/>
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  2.4 0 0 0 -1.12" result="hi"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.32 0 0 0 -0.11" result="gr"/>
+      <feMerge><feMergeNode in="lo"/><feMergeNode in="hi"/><feMergeNode in="gr"/></feMerge>
+    </filter>
+    <filter id="t-beton" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="8" result="a"/>
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.2 0 0 0 0.68" result="lo"/>
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.1 0 0 0 -0.56" result="hi"/>
+      <feTurbulence type="turbulence" baseFrequency="0.11" numOctaves="1" seed="21" result="p"/>
+      <feColorMatrix in="p" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -10 0 0 0 0.75" result="pores"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="5" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.6 0 0 0 -0.24" result="gr"/>
+      <feMerge><feMergeNode in="lo"/><feMergeNode in="hi"/><feMergeNode in="gr"/><feMergeNode in="pores"/></feMerge>
+    </filter>
+    <filter id="t-mikrocement" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.005 0.008" numOctaves="3" seed="5" result="a"/>
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.1 0 0 0 0.6" result="lo"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.006" numOctaves="3" seed="13" result="b"/>
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -0.78" result="hi"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="7" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.4 0 0 0 -0.15" result="gr"/>
+      <feMerge><feMergeNode in="lo"/><feMergeNode in="hi"/><feMergeNode in="gr"/></feMerge>
+    </filter>
+    <filter id="t-vapenna" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.009" numOctaves="5" seed="2" result="a"/>
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.4 0 0 0 0.74" result="lo"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="6" result="b"/>
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.3 0 0 0 -0.66" result="hi"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="1" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.42 0 0 0 -0.16" result="gr"/>
+      <feMerge><feMergeNode in="lo"/><feMergeNode in="hi"/><feMergeNode in="gr"/></feMerge>
+    </filter>
+    <filter id="t-tadelakt" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.007 0.01" numOctaves="4" seed="3" result="a"/>
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.6 0 0 0 0.84" result="lo"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.005 0.012" numOctaves="3" seed="17" result="b"/>
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  2.6 0 0 0 -1.28" result="hi"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="9" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0 0 0 -0.1" result="gr"/>
+      <feMerge><feMergeNode in="lo"/><feMergeNode in="hi"/><feMergeNode in="gr"/></feMerge>
+    </filter>
+    <filter id="t-hlinena" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="9" result="a"/>
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.0 0 0 0 0.56" result="lo"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" seed="1" result="s"/>
+      <feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.3 0 0 0 -0.56" result="sd"/>
+      <feColorMatrix in="s" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -1.3 0 0 0 0.6" result="sl"/>
+      <feMerge><feMergeNode in="lo"/><feMergeNode in="sd"/><feMergeNode in="sl"/></feMerge>
+    </filter>
+    <filter id="t-plain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="4" result="a"/>
+      <feColorMatrix in="a" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.5 0 0 0 0.28" result="lo"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="2" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.25 0 0 0 -0.08" result="gr"/>
+      <feMerge><feMergeNode in="lo"/><feMergeNode in="gr"/></feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<header class="hdr" id="hdr">
+  <div class="wrap hdr-in">
+    <a class="hdr-logo" href="#top">STĚRKAŘI.</a>
+    <nav class="hdr-nav" aria-label="Hlavní menu">
+      <ul>
+        <li><a href="#sterky">Stěrky</a></li>
+        <li><a href="#workshop">Workshop</a></li>
+        <li><a href="#jak-to-funguje">Jak to funguje</a></li>
+        <li><a href="#inspirace">Inspirace</a></li>
+        <li><a href="#o-nas">O nás</a></li>
+      </ul>
+    </nav>
+    <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menuPanel" aria-label="Otevřít menu"><span></span><span></span></button>
+    <a class="btn btn-dark" href="#kontakt">Chci na workshop</a>
+  </div>
+  <nav class="menu-panel" id="menuPanel" aria-label="Menu">
+    <ul>
+      <li><a href="#sterky">Stěrky</a></li>
+      <li><a href="#workshop">Workshop</a></li>
+      <li><a href="#jak-to-funguje">Jak to funguje</a></li>
+      <li><a href="#inspirace">Inspirace</a></li>
+      <li><a href="#o-nas">O nás</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="top">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1>Stěrku zvládnete sami.<span>My vám ukážeme jak.</span></h1>
+          <p>Jednodenní workshop ve showroomu, materiál připravený v&nbsp;balíku a&nbsp;podpora, když je potřeba. Naučíte se nanášet stěrku s&nbsp;jistotou, na stěnu, kterou budete mít doma.</p>
+          <div class="hero-cta">
+            <a class="btn btn-dark" href="#kontakt">Chci na workshop</a>
+            <a class="btn btn-line" href="#jak-to-funguje">Jak to funguje</a>
+          </div>
+        </div>
+        <div class="hero-wall" aria-hidden="true">
+          <svg class="wall" preserveAspectRatio="none"><rect width="100%" height="100%" fill="#D4C4A8"/><rect width="100%" height="100%" filter="url(#t-benatsky)"/></svg>
+          <span class="wall-tag">Benátský štuk · Písková</span>
+        </div>
+      </div>
+      <div class="facts">
+        <div><b>1 den</b><span>typicky 9:00–17:00</span></div>
+        <div><b>Max. 6 lidí</b><span>na jeden termín</span></div>
+        <div><b>Materiál v&nbsp;ceně</b><span>balíček na vaši stěnu</span></div>
+        <div><b>Showroom Praha</b><span>reálná místnost</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stěrky -->
+  <section class="band" id="sterky">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Stěrky</h2>
+        <p>Vyberte si strukturu a&nbsp;odstín. Na workshopu si všechno vyzkoušíte na vzorku.</p>
+      </div>
+      <div class="tabs-scroll">
+        <div class="tabs" role="tablist" aria-label="Struktura stěrky" id="tabs">
+          <span class="tab-ind" id="tabInd" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="explorer">
+        <div class="preview" id="preview" aria-hidden="true">
+          <svg class="wall" preserveAspectRatio="none"><rect id="pvBase" width="100%" height="100%" fill="#D4C4A8"/><rect id="pvTex" width="100%" height="100%" filter="url(#t-benatsky)"/></svg>
+          <span class="wall-tag" id="pvTag">Benátský štuk · Písková</span>
+        </div>
+        <div class="info" role="tabpanel" id="panel">
+          <h3 id="sName">Benátský štuk<small id="sShade">v&nbsp;odstínu Písková</small></h3>
+          <p class="desc" id="sDesc"></p>
+          <dl class="attrs">
+            <dt>Vzhled</dt><dd id="sLook"></dd>
+            <dt>Kam se hodí</dt><dd id="sRooms"></dd>
+            <dt>Náročnost</dt><dd id="sLevel"></dd>
+          </dl>
+          <div>
+            <p class="shade-label" id="shadeLabel">Odstín</p>
+            <div class="shades" id="shades" role="group" aria-labelledby="shadeLabel" style="margin-top:10px"></div>
+          </div>
+          <div class="explorer-cta">
+            <button class="btn btn-dark" type="button" id="pickBtn">Chci tuhle stěrku</button>
+            <span class="note">Textury jsou ilustrační, skutečné vzorky uvidíte ve showroomu.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Jak to funguje -->
+  <section class="band paper" id="jak-to-funguje">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Jak to funguje</h2>
+        <p>Od prvního dotazu po hotovou stěnu u&nbsp;vás doma. Jednoduchý postup ve čtyřech krocích.</p>
+      </div>
+      <ol class="steps">
+        <li><span class="num">1</span><h3>Rezervace workshopu</h3><p>Vyplníte krátký formulář, domluvíme termín ve showroomu a&nbsp;pošleme vám potvrzení e-mailem.</p></li>
+        <li><span class="num">2</span><h3>Příprava materiálu</h3><p>Sestavíme balíček stěrky, nářadí a&nbsp;vzorků podle vašeho odstínu. Všechno je připravené na den workshopu.</p></li>
+        <li><span class="num">3</span><h3>Den ve showroomu</h3><p>V&nbsp;malé skupině projdete přípravu podkladu, nanášení, broušení a&nbsp;finální úpravu na cvičné ploše.</p></li>
+        <li><span class="num">4</span><h3>Aplikace doma</h3><p>Na vlastní stěně to zvládnete sami, s&nbsp;postupem z&nbsp;workshopu a&nbsp;možností konzultace, když něco nejde podle plánu.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Workshop -->
+  <section class="band" id="workshop">
+    <div class="wrap ws">
+      <div>
+        <div class="sec-head" style="margin-bottom:0">
+          <h2>Workshop ve showroomu</h2>
+          <p>Jeden den, malá skupina, reálné podmínky. Žádná teorie: odcházíte s&nbsp;rukama, které už stěrku znají.</p>
+        </div>
+        <ul class="checks">
+          <li><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="#C45C26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Showroom připravený jako reálná místnost</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="#C45C26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Maximálně 6 účastníků na termín</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="#C45C26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Materiál a&nbsp;nářadí k&nbsp;dispozici na místě</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M3.5 9.5l3.5 3.5 7.5-8" fill="none" stroke="#C45C26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Občerstvení během dne</li>
+        </ul>
+      </div>
+      <aside class="take">
+        <h3>Co si odnesete</h3>
+        <ul>
+          <li>Jistotu v&nbsp;postupu od přípravy po finální vrstvu</li>
+          <li>Vzorky odstínů pro rozhodnutí doma</li>
+          <li>Checklist kroků pro vaši stěnu</li>
+          <li>Kontakt na podporu po workshopu</li>
+        </ul>
+        <p class="when"><b style="color:var(--ink)">Nejbližší termíny:</b> prosinec 2026 – leden 2027 <span class="note">(ukázka)</span></p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Inspirace -->
+  <section class="band paper" id="inspirace">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Inspirace</h2>
+        <p>Před a&nbsp;po. Posuňte jezdec a&nbsp;porovnejte stěnu před stěrkou a&nbsp;po ní.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Filtrovat podle místnosti" id="filters">
+        <button class="pill" type="button" data-room="vse" aria-pressed="true">Vše</button>
+        <button class="pill" type="button" data-room="obyvak" aria-pressed="false">Obývák</button>
+        <button class="pill" type="button" data-room="koupelna" aria-pressed="false">Koupelna</button>
+        <button class="pill" type="button" data-room="chodba" aria-pressed="false">Chodba</button>
+      </div>
+      <div class="compare" id="compare">
+        <div class="layer before"><svg class="wall" preserveAspectRatio="none"><rect width="100%" height="100%" fill="#DCD9D2"/><rect width="100%" height="100%" filter="url(#t-plain)"/></svg></div>
+        <div class="layer after" id="cmpAfter"><svg class="wall" preserveAspectRatio="none"><rect id="cmpBase" width="100%" height="100%" fill="#D4C4A8"/><rect id="cmpTex" width="100%" height="100%" filter="url(#t-vapenna)"/></svg></div>
+        <div class="handle" id="cmpHandle"><span class="knob"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M7 4L2 9l5 5M11 4l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <span class="lbl l">Před</span><span class="lbl r">Po</span>
+        <input type="range" id="cmpRange" min="0" max="100" value="50" aria-label="Porovnat před a po">
+      </div>
+      <div class="compare-cap"><b id="cmpTitle">Obývák — teplá písková stěna</b><span class="note">Ilustrační ukázky. Fotky skutečných stěn doplníme.</span></div>
+      <div class="grid-insp" id="grid"></div>
+    </div>
+  </section>
+
+  <!-- O nás -->
+  <section class="band" id="o-nas">
+    <div class="wrap about">
+      <div class="about-photo" aria-hidden="true">
+        <svg class="wall" preserveAspectRatio="none"><rect width="100%" height="100%" fill="#C4785A"/><rect width="100%" height="100%" filter="url(#t-hlinena)"/></svg>
+        <span class="wall-tag">Místo pro fotku týmu</span>
+      </div>
+      <div class="about-body">
+        <h2>Krásná stěrka není jen pro řemeslníky</h2>
+        <p>Stěrkaři vznikli z&nbsp;jednoduché myšlenky: stěrku na vlastní stěně zvládne každý, kdo ví, jak na to. Nemusíte volat firmu ani čekat měsíce na volný termín.</p>
+        <p>Na workshopu vám ukážeme celý postup a&nbsp;vyzkoušíte si ho vlastníma rukama. Domů odejdete s&nbsp;materiálem, nářadím a&nbsp;jistotou, že to doma dokážete.</p>
+        <ul class="about-steps">
+          <li><b>Naučíme vás to</b><span>Celý postup na jednom workshopu, od podkladu po finální vrstvu.</span></li>
+          <li><b>Vybavíme vás</b><span>Stěrku, nářadí a&nbsp;vzorky vám připravíme na míru vaší stěně.</span></li>
+          <li><b>Zvládnete to sami</b><span>A&nbsp;když se doma zaseknete, jsme na telefonu.</span></li>
+        </ul>
+        <p class="placeholder">Sem doplníme vaše jména, fotku a&nbsp;krátký příběh, proč jste Stěrkaře založili.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="band paper" id="faq">
+    <div class="wrap">
+      <div class="sec-head"><h2>Časté dotazy</h2></div>
+      <div class="faq" id="faqList">
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="true">Jak dlouho workshop trvá?<span class="ic" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></button>
+          <div class="faq-a"><div><p>Počítejte s&nbsp;celým dnem, typicky 9:00–17:00 včetně pauz. Tempo přizpůsobujeme skupině, aby každý stihl celý postup vyzkoušet.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">Jak velkou stěnu zvládnu sám?<span class="ic" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></button>
+          <div class="faq-a"><div><p>Na workshopu trénujete techniku na vzorku. Doma pak zvládnete běžný obývací pokoj nebo koupelnu, pokud dodržíte postup. U&nbsp;větších ploch doporučíme rozdělit práci na etapy.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">Je stěrka vhodná do koupelny?<span class="ic" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></button>
+          <div class="faq-a"><div><p>Ano, s&nbsp;vhodnou přípravou podkladu a&nbsp;správným finišem. Na workshopu projdeme specifika vlhkého prostředí a&nbsp;doporučené vrstvy.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">Pomůžete mi doma, když se zaseknu?<span class="ic" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></button>
+          <div class="faq-a"><div><p>Ano. Po workshopu máte kontakt na konzultaci telefonem i&nbsp;e-mailem. U&nbsp;složitějších situací domluvíme individuální podporu.</p></div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">Jak probíhá dodání materiálu?<span class="ic" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></button>
+          <div class="faq-a"><div><p>Balíček připravíme podle zvoleného odstínu a&nbsp;rozměrů, které si domluvíme po workshopu. Pošleme ho kurýrem, nebo si ho vyzvednete ve showroomu.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kontakt -->
+  <section class="band paper" id="kontakt" style="padding-top:0">
+    <div class="wrap contact">
+      <div>
+        <div class="sec-head" style="margin-bottom:0">
+          <h2>Rezervace workshopu</h2>
+          <p>Napište nám a&nbsp;ozveme se s&nbsp;termíny a&nbsp;detaily.</p>
+        </div>
+        <div class="showroom">
+          <b>Showroom Stěrkaři</b>
+          <span>Praha, přesnou adresu doplníme</span>
+          <span>Vstup po domluvě</span>
+        </div>
+      </div>
+      <form class="form" id="form" novalidate>
+        <div class="chosen" id="chosen" hidden>
+          <span class="sw"><svg class="wall" preserveAspectRatio="none"><rect id="chBase" width="100%" height="100%" fill="#D4C4A8"/><rect id="chTex" width="100%" height="100%" filter="url(#t-benatsky)"/></svg></span>
+          <span>Láká mě: <b id="chName">Benátský štuk · Písková</b></span>
+          <button type="button" id="chClear">Odebrat</button>
+        </div>
+        <div class="field" id="f-name">
+          <label for="name">Jméno a&nbsp;příjmení</label>
+          <input id="name" name="name" autocomplete="name" required>
+          <span class="msg" aria-live="polite"></span>
+        </div>
+        <div class="two">
+          <div class="field" id="f-email">
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+            <span class="msg" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="phone">Telefon <i>(nepovinné)</i></label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel">
+          </div>
+        </div>
+        <div class="field">
+          <label for="when">Preferovaný termín <i>(nepovinné)</i></label>
+          <select id="when" name="when">
+            <option value="">Je mi to jedno</option>
+            <option>Co nejdříve</option>
+            <option>Prosinec 2026</option>
+            <option>Leden 2027</option>
+            <option>Únor 2027</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="msg">Zpráva <i>(nepovinné)</i></label>
+          <textarea id="msg" name="msg" placeholder="Např. jakou stěnu chcete udělat a&nbsp;jak je velká"></textarea>
+        </div>
+        <button class="btn btn-dark" type="submit">Odeslat rezervaci</button>
+        <p class="note">Údaje použijeme jen k&nbsp;domluvě workshopu. Podrobnosti v&nbsp;zásadách ochrany osobních údajů.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="hdr-logo" href="#top">STĚRKAŘI.</a>
+    <ul>
+      <li><a href="#sterky">Stěrky</a></li>
+      <li><a href="#workshop">Workshop</a></li>
+      <li><a href="#jak-to-funguje">Jak to funguje</a></li>
+      <li><a href="#inspirace">Inspirace</a></li>
+      <li><a href="#o-nas">O nás</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+    <div class="small"><span>© 2026 Stěrkaři · sterkari.cz</span><span>Ochrana osobních údajů</span></div>
+  </div>
+</footer>
+
+<div class="toast hide" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  var NB = ' ';
+  var STRUCT = [
+    { id: 'benatsky', name: 'Benátský štuk', look: 'lesklý, hloubka mramoru', rooms: 'obývák, ložnice, chodba', level: 3,
+      desc: 'Hladký, lesklý povrch s' + NB + 'hloubkou mramoru. Nanáší se v' + NB + 'tenkých vrstvách a' + NB + 'na závěr se hladítkem vyleští.' },
+    { id: 'beton', name: 'Betonová stěrka', look: 'matný, jemné póry', rooms: 'obývák, kuchyň, chodba', level: 2,
+      desc: 'Industriální vzhled pohledového betonu s' + NB + 'jemnými póry a' + NB + 'mapováním. Působí syrově, ale na dotek je příjemná.' },
+    { id: 'mikrocement', name: 'Mikrocement', look: 'saténový, souvislý', rooms: 'koupelna, kuchyň, obývák', level: 2,
+      desc: 'Velmi tenká souvislá vrstva bez spár. Klidný, čistý povrch, který s' + NB + 'ochranným lakem vydrží i' + NB + 'v' + NB + 'koupelně.' },
+    { id: 'vapenna', name: 'Vápenná stěrka', look: 'matný, měkké mramorování', rooms: 'ložnice, obývák, dětský pokoj', level: 1,
+      desc: 'Matný, prodyšný povrch s' + NB + 'měkkým mramorováním. Pomáhá regulovat vlhkost a' + NB + 'dobře stárne.' },
+    { id: 'tadelakt', name: 'Tadelakt', look: 'hedvábný lesk', rooms: 'koupelna, sprchový kout', level: 3,
+      desc: 'Tradiční marocká vápenná technika. Povrch se zhutní kamenem a' + NB + 'ošetří mýdlem, takže odolává vodě.' },
+    { id: 'hlinena', name: 'Hliněná omítka', look: 'zrnitý mat', rooms: 'ložnice, obývák', level: 1,
+      desc: 'Teplá zrnitá textura z' + NB + 'přírodní hlíny a' + NB + 'písku. Nejvíc ruční ze všech, každá stěna je trochu jiná.' }
+  ];
+  var SHADES = [
+    { id: 'piskova', name: 'Písková', hex: '#D4C4A8' },
+    { id: 'mlha', name: 'Šedá mlha', hex: '#B8BCC4' },
+    { id: 'oliva', name: 'Olivová hlína', hex: '#8A8F6E' },
+    { id: 'krida', name: 'Bílá křída', hex: '#EEEBE5' },
+    { id: 'terakota', name: 'Teplá terakota', hex: '#C4785A' },
+    { id: 'antracit', name: 'Antracit', hex: '#454545' }
+  ];
+  var LEVEL = ['', 'snadná', 'střední', 'náročnější'];
+  var state = { s: 0, h: 0 };
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (id) { return document.getElementById(id); };
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  function wallSVG(hex, struct) {
+    var svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('class', 'wall'); svg.setAttribute('preserveAspectRatio', 'none');
+    var a = document.createElementNS(SVGNS, 'rect'); a.setAttribute('width', '100%'); a.setAttribute('height', '100%'); a.setAttribute('fill', hex);
+    var b = document.createElementNS(SVGNS, 'rect'); b.setAttribute('width', '100%'); b.setAttribute('height', '100%'); b.setAttribute('filter', 'url(#t-' + struct + ')');
+    svg.appendChild(a); svg.appendChild(b);
+    return svg;
+  }
+
+  /* ---- Toast ---- */
+  var toastEl = $('toast'), toastT;
+  function toast(msg) {
+    toastEl.textContent = msg; toastEl.classList.remove('hide');
+    clearTimeout(toastT); toastT = setTimeout(function () { toastEl.classList.add('hide'); }, 3200);
+  }
+  document.addEventListener('visibilitychange', function () { if (document.hidden) clearTimeout(toastT); else if (!toastEl.classList.contains('hide')) toastT = setTimeout(function () { toastEl.classList.add('hide'); }, 1600); });
+
+  /* ---- Header border on scroll ---- */
+  var hdr = $('hdr');
+  function onScroll() { hdr.classList.toggle('scrolled', window.scrollY > 8); }
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  /* ---- Hamburger menu ---- */
+  var burger = $('burger'), panel = $('menuPanel');
+  function setMenu(open) {
+    panel.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'Zavřít menu' : 'Otevřít menu');
+  }
+  burger.addEventListener('click', function () { setMenu(!panel.classList.contains('open')); });
+  panel.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('click', function (e) { if (panel.classList.contains('open') && !e.target.closest('#hdr')) setMenu(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && panel.classList.contains('open')) { setMenu(false); burger.focus(); } });
+
+  /* Switch to the hamburger only when logo + menu + button no longer fit with breathing room */
+  var hdrIn = hdr.querySelector('.hdr-in'), navUl = hdr.querySelector('.hdr-nav ul'),
+      logoEl = hdr.querySelector('.hdr-logo'), ctaEl = hdr.querySelector('.hdr .btn'), MIN_GAP = 40;
+  function fitHeader() {
+    var wasCompact = hdr.classList.contains('compact');
+    hdr.classList.remove('compact'); // measure the full layout (same frame, never painted)
+    var cs = getComputedStyle(hdrIn);
+    var avail = hdrIn.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    var need = logoEl.offsetWidth + navUl.scrollWidth + ctaEl.offsetWidth + MIN_GAP * 2;
+    var compact = need > avail;
+    hdr.classList.toggle('compact', compact);
+    if (wasCompact && !compact) setMenu(false);
+  }
+  var fitQueued = false;
+  window.addEventListener('resize', function () {
+    if (fitQueued) return; fitQueued = true;
+    requestAnimationFrame(function () { fitQueued = false; fitHeader(); });
+  });
+  fitHeader();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeader);
+
+  /* ---- Stěrky explorer ---- */
+  var tabsEl = $('tabs'), ind = $('tabInd'), shadesEl = $('shades');
+  STRUCT.forEach(function (s, i) {
+    var b = document.createElement('button');
+    b.className = 'tab'; b.type = 'button'; b.setAttribute('role', 'tab'); b.id = 'tab-' + s.id;
+    b.setAttribute('aria-controls', 'panel'); b.textContent = s.name;
+    b.addEventListener('click', function () { setStruct(i, true); });
+    tabsEl.appendChild(b);
+  });
+  tabsEl.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    var n = (state.s + (e.key === 'ArrowRight' ? 1 : -1) + STRUCT.length) % STRUCT.length;
+    setStruct(n, true); tabsEl.querySelectorAll('.tab')[n].focus();
+  });
+  SHADES.forEach(function (h, i) {
+    var b = document.createElement('button');
+    b.className = 'shade'; b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+    var sw = document.createElement('span'); sw.className = 'sw'; sw.appendChild(wallSVG(h.hex, STRUCT[0].id));
+    var l = document.createElement('span'); l.textContent = h.name;
+    b.appendChild(sw); b.appendChild(l);
+    b.addEventListener('click', function () { setShade(i); });
+    shadesEl.appendChild(b);
+  });
+
+  function moveInd() {
+    var t = tabsEl.querySelectorAll('.tab')[state.s];
+    ind.style.width = t.offsetWidth + 'px';
+    ind.style.transform = 'translateX(' + t.offsetLeft + 'px)';
+  }
+  function settle(el) {
+    if (reduce || !el.animate) return;
+    el.animate([{ filter: 'blur(6px)', opacity: 0.75 }, { filter: 'blur(0px)', opacity: 1 }], { duration: 280, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' });
+  }
+  function render(animate) {
+    var s = STRUCT[state.s], h = SHADES[state.h];
+    tabsEl.querySelectorAll('.tab').forEach(function (t, i) { t.setAttribute('aria-selected', i === state.s ? 'true' : 'false'); t.tabIndex = i === state.s ? 0 : -1; });
+    $('panel').setAttribute('aria-labelledby', 'tab-' + s.id);
+    moveInd();
+    $('pvBase').setAttribute('fill', h.hex);
+    $('pvTex').setAttribute('filter', 'url(#t-' + s.id + ')');
+    $('pvTag').textContent = s.name + ' · ' + h.name;
+    $('sName').firstChild.nodeValue = s.name;
+    $('sShade').textContent = 'v' + NB + 'odstínu ' + h.name;
+    $('sDesc').textContent = s.desc;
+    $('sLook').textContent = s.look;
+    $('sRooms').textContent = s.rooms;
+    var lv = $('sLevel'); lv.innerHTML = '';
+    var dots = document.createElement('span'); dots.className = 'dots'; dots.setAttribute('aria-hidden', 'true');
+    for (var k = 1; k <= 3; k++) { var d = document.createElement('i'); if (k <= s.level) d.className = 'on'; dots.appendChild(d); }
+    lv.appendChild(dots); lv.appendChild(document.createTextNode(LEVEL[s.level]));
+    shadesEl.querySelectorAll('.shade').forEach(function (b, i) {
+      b.setAttribute('aria-pressed', i === state.h ? 'true' : 'false');
+      b.querySelector('rect + rect').setAttribute('filter', 'url(#t-' + s.id + ')');
+    });
+    if (animate) settle($('preview'));
+  }
+  function setStruct(i, anim) { if (i === state.s) return; state.s = i; render(anim); }
+  function setShade(i) { if (i === state.h) return; state.h = i; render(true); }
+  window.addEventListener('resize', moveInd);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveInd);
+  render(false);
+
+  /* ---- Pick → form ---- */
+  var chosen = $('chosen');
+  $('pickBtn').addEventListener('click', function () {
+    var s = STRUCT[state.s], h = SHADES[state.h];
+    $('chBase').setAttribute('fill', h.hex);
+    $('chTex').setAttribute('filter', 'url(#t-' + s.id + ')');
+    $('chName').textContent = s.name + ' · ' + h.name;
+    chosen.hidden = false;
+    toast('Přidáno do rezervace: ' + s.name + ' · ' + h.name);
+    $('kontakt').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    setTimeout(function () { $('name').focus({ preventScroll: true }); }, reduce ? 0 : 600);
+  });
+  $('chClear').addEventListener('click', function () { chosen.hidden = true; });
+
+  /* ---- Inspirace ---- */
+  var INSP = [
+    { room: 'obyvak', label: 'Obývák', title: 'Obývák — teplá písková stěna', s: 'vapenna', h: 0 },
+    { room: 'koupelna', label: 'Koupelna', title: 'Koupelna — bílá křída', s: 'tadelakt', h: 3 },
+    { room: 'chodba', label: 'Chodba', title: 'Chodba — antracitový pruh', s: 'beton', h: 5 },
+    { room: 'obyvak', label: 'Obývák', title: 'Obývák — olivová hlína', s: 'hlinena', h: 2 },
+    { room: 'koupelna', label: 'Koupelna', title: 'Koupelna — šedá mlha', s: 'mikrocement', h: 1 },
+    { room: 'chodba', label: 'Chodba', title: 'Chodba — písková s dřevěnou lištou', s: 'benatsky', h: 0 }
+  ];
+  var grid = $('grid'), current = 0;
+  INSP.forEach(function (it, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'card'; b.dataset.room = it.room;
+    var ph = document.createElement('span'); ph.className = 'ph'; ph.appendChild(wallSVG(SHADES[it.h].hex, it.s));
+    var tag = document.createElement('span'); tag.className = 'room'; tag.textContent = it.label; ph.appendChild(tag);
+    var t = document.createElement('b'); t.textContent = it.title.split(' — ')[1];
+    var sm = document.createElement('small'); sm.textContent = STRUCT.filter(function (x) { return x.id === it.s; })[0].name + ' · ' + SHADES[it.h].name;
+    b.appendChild(ph); b.appendChild(t); b.appendChild(sm);
+    b.addEventListener('click', function () { showCompare(i); $('compare').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); });
+    grid.appendChild(b);
+  });
+  function showCompare(i) {
+    current = i; var it = INSP[i];
+    $('cmpBase').setAttribute('fill', SHADES[it.h].hex);
+    $('cmpTex').setAttribute('filter', 'url(#t-' + it.s + ')');
+    $('cmpTitle').textContent = it.title;
+    grid.querySelectorAll('.card').forEach(function (c, k) { c.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+    settle($('cmpAfter'));
+  }
+  showCompare(0);
+  var range = $('cmpRange'), after = $('cmpAfter'), handle = $('cmpHandle');
+  function setSplit(v) { after.style.clipPath = 'inset(0 0 0 ' + v + '%)'; handle.style.left = v + '%'; }
+  range.addEventListener('input', function () { setSplit(range.value); });
+  setSplit(50);
+
+  $('filters').addEventListener('click', function (e) {
+    var p = e.target.closest('.pill'); if (!p) return;
+    var room = p.dataset.room;
+    $('filters').querySelectorAll('.pill').forEach(function (x) { x.setAttribute('aria-pressed', x === p ? 'true' : 'false'); });
+    var shown = [];
+    grid.querySelectorAll('.card').forEach(function (c) {
+      var on = room === 'vse' || c.dataset.room === room;
+      c.hidden = !on; if (on) shown.push(c);
+    });
+    if (!reduce) shown.forEach(function (c, k) {
+      c.animate([{ opacity: 0, transform: 'translateY(8px) scale(0.98)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: k * 50, easing: 'cubic-bezier(0.23, 1, 0.32, 1)', fill: 'backwards' });
+    });
+    var first = INSP.findIndex(function (it) { return room === 'vse' || it.room === room; });
+    if (first > -1 && (room !== 'vse' && INSP[current].room !== room)) showCompare(first);
+  });
+
+  /* ---- FAQ ---- */
+  $('faqList').addEventListener('click', function (e) {
+    var q = e.target.closest('.faq-q'); if (!q) return;
+    q.setAttribute('aria-expanded', q.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+  });
+
+  /* ---- Form ---- */
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ok = true;
+    var name = $('name'), email = $('email');
+    function check(field, input, test, msg) {
+      var good = test(input.value.trim());
+      field.classList.toggle('err', !good);
+      field.querySelector('.msg').textContent = good ? '' : msg;
+      if (!good && ok) { input.focus(); ok = false; }
+    }
+    check($('f-name'), name, function (v) { return v.length > 1; }, 'Napište prosím své jméno.');
+    check($('f-email'), email, function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }, 'Zkontrolujte prosím e-mail, třeba jana@email.cz.');
+    if (!ok) return;
+    toast('Děkujeme, ' + name.value.trim().split(' ')[0] + '! (Ukázka: formulář zatím nic neodesílá.)');
+    this.reset(); chosen.hidden = true;
+  });
+})();
+</script>

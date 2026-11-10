@@ -1,0 +1,112 @@
+---
+import Wall from './Wall.astro';
+
+const field = 'w-full rounded-lg border border-[#dad4ca] bg-white px-3.5 py-3 text-base text-ink transition-[border-color,box-shadow] duration-150 focus:border-ink focus:shadow-[0_0_0_3px_rgba(26,26,26,0.08)] focus:outline-none';
+const label = 'text-[13px] font-semibold text-ink';
+---
+<section class="bg-paper pb-24 max-[900px]:pb-[72px]" id="kontakt">
+  <div class="wrap grid items-start gap-9 min-[901px]:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] min-[901px]:gap-14">
+    <div>
+      <div class="sec-head mb-0">
+        <h2>Rezervace workshopu</h2>
+        <p>Napište nám a&nbsp;ozveme se s&nbsp;termíny a&nbsp;detaily.</p>
+      </div>
+      <div class="mt-7 grid gap-1 rounded-card bg-white p-[22px]">
+        <b class="text-[17px] text-ink">Showroom Stěrkaři</b>
+        <span>Praha, přesnou adresu doplníme</span>
+        <span>Vstup po domluvě</span>
+      </div>
+    </div>
+
+    <form class="grid gap-[18px] rounded-card bg-white p-8 max-[560px]:p-[22px]" id="form" novalidate>
+      <div class="flex items-center gap-3 rounded-lg bg-paper px-3 py-2.5 text-sm text-ink" id="chosen" hidden>
+        <span class="block size-[34px] flex-none overflow-hidden rounded-md"><Wall shade="#D4C4A8" structure="benatsky" /></span>
+        <span>Láká mě: <b id="chName"></b></span>
+        <button class="ml-auto cursor-pointer border-0 bg-transparent text-[13px] text-muted underline underline-offset-[3px]" type="button" id="chClear">Odebrat</button>
+      </div>
+
+      <div class="grid min-w-0 gap-1.5" data-field="name">
+        <label class={label} for="name">Jméno a&nbsp;příjmení</label>
+        <input class={field} id="name" name="name" autocomplete="name" required />
+        <span class="text-[13px] text-accent empty:hidden" aria-live="polite" data-msg></span>
+      </div>
+      <div class="grid gap-[18px] min-[561px]:grid-cols-2">
+        <div class="grid min-w-0 gap-1.5" data-field="email">
+          <label class={label} for="email">E-mail</label>
+          <input class={field} id="email" name="email" type="email" autocomplete="email" required />
+          <span class="text-[13px] text-accent empty:hidden" aria-live="polite" data-msg></span>
+        </div>
+        <div class="grid min-w-0 gap-1.5">
+          <label class={label} for="phone">Telefon <i class="font-normal not-italic text-muted">(nepovinné)</i></label>
+          <input class={field} id="phone" name="phone" type="tel" autocomplete="tel" />
+        </div>
+      </div>
+      <div class="grid min-w-0 gap-1.5">
+        <label class={label} for="when">Preferovaný termín <i class="font-normal not-italic text-muted">(nepovinné)</i></label>
+        <select class={field} id="when" name="when">
+          <option value="">Je mi to jedno</option>
+          <option>Co nejdříve</option>
+          <option>Prosinec 2026</option>
+          <option>Leden 2027</option>
+          <option>Únor 2027</option>
+        </select>
+      </div>
+      <div class="grid min-w-0 gap-1.5">
+        <label class={label} for="msg">Zpráva <i class="font-normal not-italic text-muted">(nepovinné)</i></label>
+        <textarea class:list={[field, 'min-h-[110px] resize-y']} id="msg" name="msg" placeholder="Např. jakou stěnu chcete udělat a&nbsp;jak je velká"></textarea>
+      </div>
+      <input type="hidden" name="sterka" id="sterka" />
+      <button class="btn btn-dark justify-self-start" type="submit">Odeslat rezervaci</button>
+      <p class="text-[13px] text-muted">Údaje použijeme jen k&nbsp;domluvě workshopu. Podrobnosti v&nbsp;zásadách ochrany osobních údajů.</p>
+    </form>
+  </div>
+</section>
+
+<script>
+  import { STRUCTURES, SHADES } from '../data/sterky';
+
+  const form = document.getElementById('form') as HTMLFormElement;
+  const chosen = document.getElementById('chosen')!;
+  const hiddenInput = document.getElementById('sterka') as HTMLInputElement;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const toast = (msg: string) => window.dispatchEvent(new CustomEvent('toast', { detail: msg }));
+
+  // A stucco picked in the Stěrky section shows up here
+  window.addEventListener('sterka-pick', (e) => {
+    const { structure, shade } = (e as CustomEvent<{ structure: number; shade: number }>).detail;
+    const s = STRUCTURES[structure];
+    const h = SHADES[shade];
+    chosen.querySelector('[data-base]')!.setAttribute('fill', h.hex);
+    chosen.querySelector('[data-tex]')!.setAttribute('filter', `url(#t-${s.id})`);
+    document.getElementById('chName')!.textContent = `${s.name} · ${h.name}`;
+    hiddenInput.value = `${s.name} · ${h.name}`;
+    chosen.hidden = false;
+    toast(`Přidáno do rezervace: ${s.name} · ${h.name}`);
+    document.getElementById('kontakt')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    setTimeout(() => (document.getElementById('name') as HTMLInputElement).focus({ preventScroll: true }), reduce ? 0 : 600);
+  });
+  document.getElementById('chClear')!.addEventListener('click', () => { chosen.hidden = true; hiddenInput.value = ''; });
+
+  const check = (name: string, test: (v: string) => boolean, msg: string) => {
+    const wrap = form.querySelector<HTMLElement>(`[data-field="${name}"]`)!;
+    const input = wrap.querySelector('input')!;
+    const ok = test(input.value.trim());
+    input.classList.toggle('border-accent', !ok);
+    wrap.querySelector('[data-msg]')!.textContent = ok ? '' : msg;
+    return ok ? null : input;
+  };
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const bad = [
+      check('name', (v) => v.length > 1, 'Napište prosím své jméno.'),
+      check('email', (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), 'Zkontrolujte prosím e-mail, třeba jana@email.cz.'),
+    ].filter(Boolean);
+    if (bad.length) { bad[0]!.focus(); return; }
+    // TODO: send to the backend (e.g. Resend) once it exists
+    const first = (form.elements.namedItem('name') as HTMLInputElement).value.trim().split(' ')[0];
+    toast(`Děkujeme, ${first}! (Ukázka: formulář zatím nic neodesílá.)`);
+    form.reset();
+    chosen.hidden = true;
+  });
+</script>

@@ -1,0 +1,41 @@
+---
+import Wall from './Wall.astro';
+
+const facts = [
+  { title: '1 den', text: 'typicky 9:00–17:00' },
+  { title: 'Max. 6 lidí', text: 'na jeden termín' },
+  { title: 'Materiál v ceně', text: 'balíček na vaši stěnu' },
+  { title: 'Showroom Praha', text: 'reálná místnost' },
+];
+---
+<section class="bg-paper pt-[72px] max-[560px]:pt-12">
+  <div class="wrap">
+    <div class="grid items-center gap-9 min-[901px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] min-[901px]:gap-12">
+      <div class="grid min-w-0 gap-[26px]">
+        <h1 class="text-[clamp(40px,5vw,60px)] leading-[1.02] font-bold tracking-[-0.03em]">
+          Stěrku zvládnete sami.<span class="block text-accent">My vám ukážeme jak.</span>
+        </h1>
+        <p class="max-w-[34em] text-[19px] leading-[1.55]">
+          Jednodenní workshop ve showroomu, materiál připravený v&nbsp;balíku a&nbsp;podpora, když je potřeba. Naučíte se nanášet stěrku s&nbsp;jistotou, na stěnu, kterou budete mít doma.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a class="btn btn-dark" href="#kontakt">Chci na workshop</a>
+          <a class="btn btn-line" href="#jak-to-funguje">Jak to funguje</a>
+        </div>
+      </div>
+      <div class="relative aspect-[5/4] max-w-full animate-trowel overflow-hidden rounded-card shadow-[0_30px_60px_-36px_rgba(80,60,40,0.45)] motion-reduce:animate-none" aria-hidden="true">
+        <Wall shade="#D4C4A8" structure="benatsky" />
+        <span class="wall-tag">Benátský štuk · Písková</span>
+      </div>
+    </div>
+
+    <div class="mt-16 grid grid-cols-2 border-t border-line min-[901px]:grid-cols-4">
+      {facts.map((f) => (
+        <div class="grid min-w-0 gap-0.5 pt-[22px] pr-5 pb-[26px]">
+          <b class="text-[17px] font-bold text-ink">{f.title}</b>
+          <span class="text-sm">{f.text}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
