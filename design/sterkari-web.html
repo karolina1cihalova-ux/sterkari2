@@ -128,7 +128,7 @@ button { font: inherit; }
 
 /* ---------- Hero ---------- */
 .hero { background: var(--paper); padding-block: 72px 0; }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.hero-grid { display: grid; max-width: 760px; grid-template-columns: minmax(0, 1fr); gap: 48px; align-items: center; }
 .hero h1 { font-size: clamp(40px, 5vw, 60px); line-height: 1.02; font-weight: 700; letter-spacing: -0.03em; }
 .hero h1 span { display: block; color: var(--accent); }
 .hero-copy { display: grid; gap: 26px; min-width: 0; }
@@ -456,10 +456,6 @@ button { font: inherit; }
             <a class="btn btn-dark" href="#kontakt">Chci na workshop</a>
             <a class="btn btn-line" href="#jak-to-funguje">Jak to funguje</a>
           </div>
-        </div>
-        <div class="hero-wall" aria-hidden="true">
-          <svg class="wall" preserveAspectRatio="none"><rect width="100%" height="100%" fill="#D4C4A8"/><rect width="100%" height="100%" filter="url(#t-benatsky)"/></svg>
-          <span class="wall-tag">Benátský štuk · Písková</span>
         </div>
       </div>
       <div class="facts">
