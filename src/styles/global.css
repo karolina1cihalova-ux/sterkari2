@@ -57,7 +57,7 @@
    * fades back a bit faster (160ms) when the pointer leaves. Touch: the swap shows on press.
    */
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full border-[1.5px] border-ink px-8 py-3.5 text-xs font-semibold uppercase no-underline;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg border-[1.5px] border-ink px-8 py-3.5 text-xs font-semibold uppercase no-underline;
     letter-spacing: 0.025em;
     transition:
       transform 160ms var(--ease-out-strong),
@@ -98,7 +98,7 @@
 
   /* Pills used for filters */
   .pill {
-    @apply cursor-pointer rounded-full border border-stone bg-white px-[18px] py-2 text-sm font-semibold text-ink;
+    @apply cursor-pointer rounded-lg border border-stone bg-white px-[18px] py-2 text-sm font-semibold text-ink;
     transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 160ms var(--ease-out-strong);
   }
   .pill:active { transform: scale(0.97); }

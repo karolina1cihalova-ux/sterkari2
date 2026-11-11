@@ -13,11 +13,11 @@ const h = SHADES[0];
     </div>
 
     <div class="-mx-1 mb-8 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <div class="relative inline-flex gap-1 rounded-full bg-white p-1" role="tablist" aria-label="Struktura stěrky" id="tabs">
-        <span class="tab-ind absolute inset-y-1 left-0 rounded-full bg-ink" id="tabInd" aria-hidden="true"></span>
+      <div class="relative inline-flex gap-1 rounded-xl bg-white p-1" role="tablist" aria-label="Struktura stěrky" id="tabs">
+        <span class="tab-ind absolute inset-y-1 left-0 rounded-lg bg-ink" id="tabInd" aria-hidden="true"></span>
         {STRUCTURES.map((st, i) => (
           <button
-            class="tab relative z-[1] cursor-pointer whitespace-nowrap rounded-full border-0 bg-transparent px-[18px] py-2.5 text-sm font-semibold text-ink aria-selected:text-white"
+            class="tab relative z-[1] cursor-pointer whitespace-nowrap rounded-lg border-0 bg-transparent px-[18px] py-2.5 text-sm font-semibold text-ink aria-selected:text-white"
             type="button"
             role="tab"
             id={`tab-${st.id}`}
