@@ -22,21 +22,15 @@ const facts = [
 ---
 <section class="bg-paper pt-[72px] max-[560px]:pt-12">
   <div class="wrap">
-    <!-- Wide screens: big headline on the left, the supporting copy and buttons sit
-         on the right, aligned to the headline's last line -->
-    <div class="grid min-w-0 gap-[26px] max-w-[760px] min-[1140px]:max-w-none min-[1140px]:grid-cols-[auto_minmax(0,1fr)] min-[1140px]:items-end min-[1140px]:gap-16">
+    <!-- Wide screens: big headline on the left, buttons on the right on the headline's last line -->
+    <div class="grid min-w-0 gap-8 max-w-[760px] min-[1140px]:max-w-none min-[1140px]:grid-cols-[auto_minmax(0,1fr)] min-[1140px]:items-end min-[1140px]:gap-16">
         <!-- Grows with the screen: ~52px on a 375px phone, up to 64px on desktop (one sentence per line there) -->
         <h1 class="text-[clamp(40px,calc(14px+10.2vw),60px)] leading-[1.02] font-bold tracking-[-0.03em] min-[1140px]:text-[clamp(52px,calc(24px+2.92vw),64px)] min-[1140px]:whitespace-nowrap">
           Stěrku zvládnete sami.<span class="block text-accent">My vám ukážeme jak.</span>
         </h1>
-        <div class="grid min-w-0 gap-[26px] min-[1140px]:pb-1.5">
-          <p class="max-w-[34em] text-[19px] leading-[1.55] min-[1140px]:text-lg">
-            Jednodenní workshop ve showroomu, materiál připravený v&nbsp;balíku a&nbsp;podpora, když je potřeba. Naučíte se nanášet stěrku s&nbsp;jistotou, na stěnu, kterou budete mít doma.
-          </p>
-          <div class="flex flex-wrap gap-3">
-            <a class="btn btn-dark" href="#kontakt">Chci na workshop<Arrow /></a>
-            <a class="btn btn-dark" href="#jak-to-funguje">Jak to funguje<Arrow dir="down" /></a>
-          </div>
+        <div class="flex flex-wrap gap-3 min-[1140px]:justify-end min-[1140px]:pb-1.5">
+          <a class="btn btn-dark" href="#kontakt">Chci na workshop<Arrow /></a>
+          <a class="btn btn-dark" href="#jak-to-funguje">Jak to funguje<Arrow dir="down" /></a>
         </div>
     </div>
 
