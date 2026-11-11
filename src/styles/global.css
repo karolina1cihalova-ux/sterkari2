@@ -151,7 +151,7 @@
 
   /* Pills used for filters */
   .pill {
-    @apply cursor-pointer rounded-lg border border-stone bg-white px-[18px] py-2 text-sm font-semibold text-ink;
+    @apply cursor-pointer rounded-lg border border-stone bg-white px-[18px] py-2 max-[400px]:px-3.5 text-sm font-semibold text-ink;
     transition:
       background-color 220ms var(--ease-hover),
       color 220ms var(--ease-hover),

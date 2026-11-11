@@ -8,14 +8,16 @@ const filters = [{ room: 'vse', label: 'Vše' }, ...Object.entries(ROOMS).map(([
 ---
 <section class="py-24 max-[900px]:py-[72px]" id="inspirace">
   <div class="wrap">
-    <div class="sec-head mb-5">
-      <h2>Inspirace</h2>
-    </div>
-
-    <div class="mb-7 flex flex-wrap gap-2" role="group" aria-label="Filtrovat podle místnosti" id="filters">
-      {filters.map((f, i) => (
-        <button class="pill" type="button" data-room={f.room} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
-      ))}
+    <!-- Heading left, filters on the same line at the right (stacked on small screens) -->
+    <div class="mb-7 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 min-[901px]:mb-9">
+      <div class="sec-head mb-0">
+        <h2>Inspirace</h2>
+      </div>
+      <div class="flex flex-wrap gap-2" role="group" aria-label="Filtrovat podle místnosti" id="filters">
+        {filters.map((f, i) => (
+          <button class="pill" type="button" data-room={f.room} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
+        ))}
+      </div>
     </div>
 
     <ul class="m-0 grid list-none grid-cols-2 gap-x-3 gap-y-6 p-0 min-[561px]:gap-5 min-[901px]:grid-cols-3" id="grid">

@@ -8,9 +8,10 @@ const steps = [
 ---
 <section class="bg-paper py-24 max-[900px]:py-[72px]" id="jak-to-funguje">
   <div class="wrap">
-    <div class="sec-head">
+    <!-- Split head: heading left, intro aligned to the second half of the steps -->
+    <div class="sec-head min-[901px]:mb-14 min-[901px]:max-w-none min-[901px]:grid-cols-2 min-[901px]:items-end min-[901px]:gap-8">
       <h2>Jak to funguje</h2>
-      <p>Od prvního dotazu po hotovou stěnu u&nbsp;vás doma. Jednoduchý postup ve čtyřech krocích.</p>
+      <p class="max-w-[30em]">Od prvního dotazu po hotovou stěnu u&nbsp;vás doma. Jednoduchý postup ve čtyřech krocích.</p>
     </div>
     <ol class="m-0 grid list-none grid-cols-1 gap-8 p-0 min-[561px]:grid-cols-2 min-[901px]:grid-cols-4">
       {steps.map((step, i) => (
