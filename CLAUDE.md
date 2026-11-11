@@ -9,7 +9,8 @@ Czech-only marketing site for stucco (stěrka) workshops: people learn to do stu
 - Font: DM Sans, self-hosted via `@fontsource-variable/dm-sans` (no Google Fonts requests: GDPR).
 - Content/data: `src/data/sterky.ts` (structures, shades, rooms, nav).
 - Inspirace installations: one Markdown file each in `src/content/inspirace/` (schema in `src/content.config.ts`), rendered as cards on the homepage and as detail pages at `/inspirace/<file-name>/`. File names ASCII only. Photos via `cover:` / `gallery:`; without a cover a generated texture is shown. `sample: true` shows a "placeholder" notice.
-- Restart the dev server after adding a new content collection or config file.
+- Notifications: Sonner, one `<Toaster />` in `src/components/Notifications.tsx` (mounted once in Layout). From Astro scripts show one with `window.dispatchEvent(new CustomEvent('toast', { detail: { message, description, type } }))`.
+- Restart the dev server after adding a new content collection, config file or npm dependency (use `--force` if a React island fails to hydrate).
 - On Windows, run npm/npx as `npm.cmd` / `npx.cmd` (PowerShell script execution is disabled).
 
 ## Design rules (agreed with the owner)

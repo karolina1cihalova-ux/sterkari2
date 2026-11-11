@@ -69,7 +69,9 @@ const label = 'text-[13px] font-semibold text-ink';
   const chosen = document.getElementById('chosen')!;
   const hiddenInput = document.getElementById('sterka') as HTMLInputElement;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const toast = (msg: string) => window.dispatchEvent(new CustomEvent('toast', { detail: msg }));
+  // Shown by the Sonner toaster (Notifications.tsx)
+  const toast = (detail: { message: string; description?: string; type?: 'success' }) =>
+    window.dispatchEvent(new CustomEvent('toast', { detail }));
 
   const showChoice = (structure: number, shade: number) => {
     const s = STRUCTURES[structure];
@@ -91,7 +93,7 @@ const label = 'text-[13px] font-semibold text-ink';
   // A stucco picked in the Stěrky section shows up here
   window.addEventListener('sterka-pick', (e) => {
     const { structure, shade } = (e as CustomEvent<{ structure: number; shade: number }>).detail;
-    toast(`Přidáno do rezervace: ${showChoice(structure, shade)}`);
+    toast({ type: 'success', message: 'Přidáno do rezervace', description: showChoice(structure, shade) });
     document.getElementById('kontakt')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
     setTimeout(() => (document.getElementById('name') as HTMLInputElement).focus({ preventScroll: true }), reduce ? 0 : 600);
   });
@@ -115,7 +117,7 @@ const label = 'text-[13px] font-semibold text-ink';
     if (bad.length) { bad[0]!.focus(); return; }
     // TODO: send to the backend (e.g. Resend) once it exists
     const first = (form.elements.namedItem('name') as HTMLInputElement).value.trim().split(' ')[0];
-    toast(`Děkujeme, ${first}! (Ukázka: formulář zatím nic neodesílá.)`);
+    toast({ type: 'success', message: `Děkujeme, ${first}!`, description: 'Ukázka: formulář zatím nic neodesílá.' });
     form.reset();
     chosen.hidden = true;
   });

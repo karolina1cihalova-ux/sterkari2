@@ -1,8 +1,9 @@
 ---
 import '@fontsource-variable/dm-sans';
+import 'sonner/dist/styles.css'; // Astro needs Sonner's stylesheet imported explicitly
 import '../styles/global.css';
 import PlasterFilters from '../components/PlasterFilters.astro';
-import Toast from '../components/Toast.astro';
+import Notifications from '../components/Notifications.tsx';
 
 interface Props {
   title?: string;
@@ -30,6 +31,6 @@ const {
   <body>
     <PlasterFilters />
     <slot />
-    <Toast />
+    <Notifications client:idle />
   </body>
 </html>
