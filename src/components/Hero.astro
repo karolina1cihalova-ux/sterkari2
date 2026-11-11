@@ -1,6 +1,5 @@
 ---
 import Arrow from './Arrow.astro';
-import TrowelReveal from './TrowelReveal.astro';
 
 // Line icons (24×24, drawn with the current text colour)
 const icons = {
@@ -35,11 +34,7 @@ const facts = [
         </div>
     </div>
 
-    <div class="mt-12 max-[560px]:mt-9">
-      <TrowelReveal />
-    </div>
-
-    <div class="mt-10 grid grid-cols-2 border-t border-line min-[901px]:grid-cols-4">
+    <div class="mt-16 min-[1140px]:mt-20 grid grid-cols-2 border-t border-line min-[901px]:grid-cols-4">
       {facts.map((f) => (
         <div class="flex min-w-0 items-start gap-3.5 pt-6 pr-5 pb-7 max-[560px]:flex-col max-[560px]:gap-3">
           <span class="grid size-11 flex-none place-items-center rounded-lg bg-white text-accent" aria-hidden="true">

@@ -20,5 +20,4 @@ Czech-only marketing site for stucco (stěrka) workshops: people learn to do stu
 - Layout: left-aligned, no centred sections. Each section has its own head pattern (hero: headline left, buttons right from 1140px, Inspirace heading + filters on one row, Jak to funguje split head aligned to the step grid, FAQ sticky heading column). FAQ and Rezervace (both paper) share one 1 : 2 grid; keep them aligned.
 - Motion follows Emil Kowalski's design-engineering rules (`emil-design-eng` skill): custom ease-out curves, UI animations < 300ms, `scale(0.97)` on press, hover only on hover devices, respect `prefers-reduced-motion`.
 - Czech typography: no single-letter word (a, i, k, o, s, u, v, z) at a line end — use `&nbsp;` in markup or `cz()` from `src/data/sterky.ts`. Prices `2 490 Kč`, dates `13. 3. 2027`.
-- Hero trowel wall (`TrowelReveal.astro`): one trowel stroke plasters a bare wall on first view (~1.7 s, WAAPI); reduced motion / no JS shows the finished wall.
 - Textures are generated SVG placeholders until real photos exist; mark examples as "ukázka"/"ilustrační".
