@@ -5,6 +5,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import Wall from '../../components/Wall.astro';
+import Arrow from '../../components/Arrow.astro';
 import InstallationPhoto from '../../components/InstallationPhoto.astro';
 import InstallationCard from '../../components/InstallationCard.astro';
 import { ROOMS, LEVEL_LABEL, cz, structureById, shadeById } from '../../data/sterky';
@@ -101,8 +102,8 @@ const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
               </dd>
             </dl>
             <div class="grid gap-2.5">
-              <a class="btn btn-dark" href={learnHref}>Chci se to naučit</a>
-              <a class="btn btn-line" href="/#sterky">Prohlédnout stěrky</a>
+              <a class="btn btn-dark" href={learnHref}>Chci se to naučit<Arrow /></a>
+              <a class="btn btn-line" href="/#sterky">Prohlédnout stěrky<Arrow /></a>
             </div>
           </aside>
         </div>
@@ -122,7 +123,7 @@ const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
         <div class="wrap">
           <div class="sec-head flex flex-wrap items-end justify-between gap-4 max-w-none">
             <h2>Další inspirace</h2>
-            <a class="btn btn-line" href="/#inspirace">Všechny realizace</a>
+            <a class="btn btn-line" href="/#inspirace">Všechny realizace<Arrow /></a>
           </div>
           <ul class="m-0 grid list-none grid-cols-2 gap-x-3 gap-y-6 p-0 min-[561px]:gap-5 min-[901px]:grid-cols-3">
             {others.map((o) => <li><InstallationCard item={o} /></li>)}

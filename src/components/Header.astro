@@ -1,5 +1,6 @@
 ---
 import { NAV } from '../data/sterky';
+import Arrow from './Arrow.astro';
 ---
 <header id="hdr" class="hdr sticky z-50 border-b border-transparent bg-white/95 backdrop-blur-md backdrop-saturate-[1.2] transition-colors duration-200 [&.scrolled]:border-line">
   <div class="hdr-in wrap grid min-h-[73px] grid-cols-[1fr_auto_1fr] items-center gap-6 py-3 max-[560px]:grid-cols-[1fr_auto_auto] max-[560px]:gap-2 max-[360px]:gap-1.5">
@@ -27,7 +28,7 @@ import { NAV } from '../data/sterky';
       <span></span><span></span>
     </button>
 
-    <a class="btn btn-dark justify-self-end py-3 max-[420px]:px-4 max-[360px]:px-3 max-[360px]:tracking-normal" href="/#kontakt">Chci na workshop</a>
+    <a class="btn btn-dark justify-self-end py-3 max-[420px]:px-4 max-[360px]:px-3 max-[360px]:tracking-normal" href="/#kontakt">Chci na workshop<Arrow class="max-[420px]:hidden" /></a>
   </div>
 
   <nav class="menu-panel absolute inset-x-0 top-full border-b border-line bg-white shadow-[0_24px_40px_-28px_rgba(26,26,26,0.35)]" id="menuPanel" aria-label="Menu">
@@ -49,7 +50,8 @@ import { NAV } from '../data/sterky';
   .hdr.compact .burger { display: inline-grid; }
 
   /* Burger: two lines that morph into an ✕ */
-  .burger { transition: transform 160ms var(--ease-out-strong), border-color 180ms ease; }
+  .burger { transition: transform 160ms var(--ease-hover), border-color 220ms var(--ease-hover), background-color 220ms var(--ease-hover); }
+  @media (hover: hover) and (pointer: fine) { .burger:hover { background-color: var(--color-paper); } }
   .burger:active { transform: scale(0.95); }
   .burger span { grid-area: 1 / 1; width: 18px; height: 2px; border-radius: 2px; background: currentColor; transition: transform 250ms var(--ease-out-strong); }
   .burger span:first-child { transform: translateY(-4px); }

@@ -1,5 +1,6 @@
 ---
 import Wall from './Wall.astro';
+import Arrow from './Arrow.astro';
 import { STRUCTURES, SHADES, LEVEL_LABEL } from '../data/sterky';
 
 const s = STRUCTURES[0];
@@ -66,7 +67,7 @@ const h = SHADES[0];
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <button class="btn btn-dark" type="button" id="pickBtn">Chci tuhle stěrku</button>
+          <button class="btn btn-dark" type="button" id="pickBtn">Chci tuhle stěrku<Arrow /></button>
           <span class="text-[13px] text-muted">Textury jsou ilustrační, skutečné vzorky uvidíte ve showroomu.</span>
         </div>
       </div>
@@ -76,7 +77,8 @@ const h = SHADES[0];
 
 <style>
   .tab-ind { transition: transform 300ms var(--ease-out-strong), width 300ms var(--ease-out-strong); }
-  .tab { transition: color 200ms ease, transform 160ms var(--ease-out-strong); }
+  .tab { transition: color 220ms var(--ease-hover), background-color 220ms var(--ease-hover), transform 160ms var(--ease-hover); }
+  @media (hover: hover) and (pointer: fine) { .tab:not([aria-selected='true']):hover { background-color: var(--color-paper); } }
   .tab:active { transform: scale(0.97); }
   .shade { transition: transform 160ms var(--ease-out-strong); }
   .shade:active { transform: scale(0.96); }

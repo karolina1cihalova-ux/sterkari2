@@ -21,6 +21,15 @@
   /* Emil Kowalski's curves: strong ease-out for UI, ease-in-out for on-screen movement */
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  /* Hover: gentle ease-in-out, so it speeds up and settles naturally in both directions */
+  --ease-hover: cubic-bezier(0.45, 0, 0.2, 1);
+  /* Sheen sweep: slow start, long soft finish, like light gliding over polished plaster */
+  --ease-sheen: cubic-bezier(0.55, 0.05, 0.25, 1);
+
+  /* Warm shadows (brown, not grey) so lifted elements sit on the plaster */
+  --shadow-rest: 0 1px 2px rgb(60 40 25 / 0.10), 0 4px 10px -6px rgb(60 40 25 / 0.25);
+  --shadow-lift: 0 2px 4px rgb(60 40 25 / 0.08), 0 14px 26px -12px rgb(70 45 25 / 0.45);
+  --shadow-press: 0 1px 2px rgb(60 40 25 / 0.14);
 }
 
 /* Page gutter that also clears phone notches */
@@ -50,38 +59,82 @@
 }
 
 @layer components {
-  /* Buttons: pill, uppercase, press feedback */
   /*
-   * Interaction (from the owner's reference recording): on hover the button fills —
-   * outline → solid ink with white text, solid → outline. Colour fades in ~220ms and
-   * fades back a bit faster (160ms) when the pointer leaves. Touch: the swap shows on press.
+   * Buttons — "polished plaster" hover:
+   *  - lifts 2px, warm shadow deepens (the button rises off the wall)
+   *  - background warms slightly (no black↔white swap)
+   *  - a soft sheen sweeps across once, like light over polished stucco
+   *  - the arrow nudges toward where it leads
+   * Enter and exit use the same curve and length, so both feel equally finished.
+   * The whole button, including its border, is the hover area (see ::after).
    */
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg border-[1.5px] border-ink px-8 py-3.5 text-xs font-semibold uppercase no-underline;
+    @apply relative inline-flex cursor-pointer items-center justify-center gap-2.5 whitespace-nowrap rounded-lg border-[1.5px] border-ink px-8 py-3.5 text-xs font-semibold uppercase no-underline;
     letter-spacing: 0.025em;
+    /* Sheen lives in the background, so it is clipped to the button's own shape */
+    background-image: linear-gradient(105deg, transparent 40%, var(--btn-sheen) 50%, transparent 60%);
+    background-size: 280% 100%;
+    background-position: 135% 0;
+    background-repeat: no-repeat;
     transition:
-      transform 160ms var(--ease-out-strong),
-      background-color 160ms ease,
-      color 160ms ease,
-      box-shadow 160ms ease;
+      transform 260ms var(--ease-hover),
+      box-shadow 260ms var(--ease-hover),
+      background-color 260ms var(--ease-hover),
+      border-color 260ms var(--ease-hover),
+      color 260ms var(--ease-hover),
+      background-position 0s linear 260ms; /* sheen resets off-screen after the exit, never visible going back */
   }
-  .btn:active { transform: scale(0.97); }
+  /*
+   * Hover area: the button moves up 2px on hover. Without this, a pointer resting on its
+   * bottom edge would fall out, flicker the hover off, back on, and so on. The invisible
+   * extension keeps the full original footprint (plus a little) hoverable and clickable.
+   */
+  .btn::after { content: ""; position: absolute; inset: -3px -3px -6px; }
 
-  /* Outline at rest, fills on hover */
-  .btn-line { @apply bg-transparent text-ink; }
-  /* Solid at rest, turns to outline on hover */
   .btn-dark {
     @apply bg-ink text-white;
-    box-shadow: 0 4px 6px -1px rgb(26 26 26 / 0.15), 0 2px 4px -2px rgb(26 26 26 / 0.15);
+    --btn-sheen: rgb(255 255 255 / 0.16);
+    box-shadow: var(--shadow-rest);
+  }
+  .btn-line {
+    @apply bg-transparent text-ink;
+    --btn-sheen: rgb(196 92 38 / 0.10); /* terracotta glint on light buttons */
   }
 
+  /* Arrow inside buttons (Arrow.astro) */
+  .btn-arrow { display: inline-grid; transition: transform 260ms var(--ease-hover); }
+  .btn-dark .btn-arrow { color: #e8a37f; }
+  .btn-line .btn-arrow { color: var(--color-accent); }
+
   @media (hover: hover) and (pointer: fine) {
-    .btn:hover { transition-duration: 160ms, 220ms, 220ms, 220ms; }
-    .btn-line:hover { @apply bg-ink text-white; }
-    .btn-dark:hover { @apply bg-white text-ink; box-shadow: none; }
+    .btn:hover {
+      transform: translateY(-2px);
+      background-position: -35% 0;
+      transition:
+        transform 260ms var(--ease-hover),
+        box-shadow 260ms var(--ease-hover),
+        background-color 260ms var(--ease-hover),
+        border-color 260ms var(--ease-hover),
+        color 260ms var(--ease-hover),
+        background-position 900ms var(--ease-sheen);
+    }
+    .btn-dark:hover { background-color: #2b2724; border-color: #2b2724; box-shadow: var(--shadow-lift); }
+    .btn-line:hover { background-color: rgb(255 255 255 / 0.72); box-shadow: var(--shadow-lift); }
+    .btn:hover .btn-arrow { transform: translateX(3px); }
+    .btn:hover .btn-arrow-down { transform: translateY(2px); }
   }
-  .btn-line:focus-visible, .btn-line:active { @apply bg-ink text-white; }
-  .btn-dark:focus-visible, .btn-dark:active { @apply bg-white text-ink; box-shadow: none; }
+
+  /* Keyboard focus gets the same lifted look */
+  .btn:focus-visible { transform: translateY(-2px); }
+  .btn-dark:focus-visible { background-color: #2b2724; box-shadow: var(--shadow-lift); }
+  .btn-line:focus-visible { background-color: rgb(255 255 255 / 0.72); box-shadow: var(--shadow-lift); }
+
+  /* Press: settles back onto the wall, quickly */
+  .btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-press);
+    transition-duration: 120ms, 120ms, 260ms, 260ms, 260ms, 0s;
+  }
 
   /* Small white label on top of a wall texture */
   .wall-tag {
@@ -99,15 +152,26 @@
   /* Pills used for filters */
   .pill {
     @apply cursor-pointer rounded-lg border border-stone bg-white px-[18px] py-2 text-sm font-semibold text-ink;
-    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 160ms var(--ease-out-strong);
+    transition:
+      background-color 220ms var(--ease-hover),
+      color 220ms var(--ease-hover),
+      border-color 220ms var(--ease-hover),
+      box-shadow 220ms var(--ease-hover),
+      transform 160ms var(--ease-hover);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pill:not([aria-pressed="true"]):hover { background-color: var(--color-paper); border-color: #b9b0a3; }
   }
   .pill:active { transform: scale(0.97); }
-  .pill[aria-pressed="true"] { @apply border-ink bg-ink text-white; }
+  .pill[aria-pressed="true"] { @apply border-ink bg-ink text-white; box-shadow: var(--shadow-rest); }
 }
 
 /* Generated plaster textures: the filter only draws light and shadow */
 .wall rect + rect { opacity: 0.5; }
 
+/* Reduced motion: keep the colour and shadow changes, drop movement and the sweep */
 @media (prefers-reduced-motion: reduce) {
-  .btn:active, .pill:active { transform: none; }
+  .btn, .btn:hover, .btn:focus-visible, .btn:active, .pill:active { transform: none !important; }
+  .btn { background-image: none; }
+  .btn-arrow, .btn:hover .btn-arrow { transform: none !important; }
 }

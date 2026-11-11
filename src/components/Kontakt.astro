@@ -1,5 +1,6 @@
 ---
 import Wall from './Wall.astro';
+import Arrow from './Arrow.astro';
 
 const field = 'w-full rounded-lg border border-[#dad4ca] bg-white px-3.5 py-3 text-base text-ink transition-[border-color,box-shadow] duration-150 focus:border-ink focus:shadow-[0_0_0_3px_rgba(26,26,26,0.08)] focus:outline-none';
 const label = 'text-[13px] font-semibold text-ink';
@@ -56,7 +57,7 @@ const label = 'text-[13px] font-semibold text-ink';
         <textarea class:list={[field, 'min-h-[110px] resize-y']} id="msg" name="msg" placeholder="Např. jakou stěnu chcete udělat a&nbsp;jak je velká"></textarea>
       </div>
       <input type="hidden" name="sterka" id="sterka" />
-      <button class="btn btn-dark justify-self-start" type="submit">Odeslat rezervaci</button>
+      <button class="btn btn-dark justify-self-start" type="submit">Odeslat rezervaci<Arrow /></button>
       <p class="text-[13px] text-muted">Údaje použijeme jen k&nbsp;domluvě workshopu. Podrobnosti v&nbsp;zásadách ochrany osobních údajů.</p>
     </form>
   </div>
