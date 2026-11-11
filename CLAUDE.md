@@ -5,7 +5,7 @@
 Czech-only marketing site for stucco (stěrka) workshops: people learn to do stucco walls themselves, get tools and materials, then do it at home.
 
 ## Stack
-- Astro 7 (static) + Tailwind CSS v4 via `@tailwindcss/vite`. Brand tokens live in `src/styles/global.css` (`@theme static`).
+- Astro 7 (static) + Tailwind CSS v4 via `@tailwindcss/vite` + React 19 via `@astrojs/react` (use React components as islands only where interactivity needs it, e.g. `<Comp client:load />`; plain Astro components otherwise). Brand tokens live in `src/styles/global.css` (`@theme static`).
 - Font: DM Sans, self-hosted via `@fontsource-variable/dm-sans` (no Google Fonts requests: GDPR).
 - Content/data: `src/data/sterky.ts` (structures, shades, rooms, nav).
 - Inspirace installations: one Markdown file each in `src/content/inspirace/` (schema in `src/content.config.ts`), rendered as cards on the homepage and as detail pages at `/inspirace/<file-name>/`. File names ASCII only. Photos via `cover:` / `gallery:`; without a cover a generated texture is shown. `sample: true` shows a "placeholder" notice.
