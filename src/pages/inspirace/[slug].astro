@@ -72,7 +72,7 @@ const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
             Ukázková realizace: text i&nbsp;fotky nahradíme skutečnými.
           </p>
         )}
-        <div class="relative aspect-[16/9] max-w-full overflow-hidden rounded-card bg-line max-[560px]:aspect-[4/5]">
+        <div class="relative aspect-[16/9] max-w-full overflow-hidden rounded-card bg-line shadow-float max-[560px]:aspect-[4/5]">
           <InstallationPhoto photo={d.cover} alt={d.title} structure={d.structure} shade={d.shade} sizes="(min-width: 1200px) 1152px, 100vw" widths={[800, 1200, 1800]} loading="eager" />
         </div>
 
@@ -81,7 +81,7 @@ const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
             <Content />
           </article>
 
-          <aside class="grid gap-5 rounded-card bg-paper p-6 min-[901px]:sticky min-[901px]:top-[96px]">
+          <aside class="grid gap-5 rounded-card bg-paper p-6 shadow-card min-[901px]:sticky min-[901px]:top-[96px]">
             <p class="text-[13px] font-semibold tracking-[0.14em] text-muted uppercase">Použitá stěrka</p>
             <div class="flex items-center gap-4">
               <span class="block size-16 flex-none overflow-hidden rounded-lg shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
@@ -111,7 +111,7 @@ const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
         {d.gallery.length > 0 && (
           <div class="mt-16 grid grid-cols-1 gap-4 min-[561px]:grid-cols-2">
             {d.gallery.map((img, i) => (
-              <Image src={img} alt={`${d.title}, fotka ${i + 2}`} widths={[600, 1000]} sizes="(min-width: 561px) 50vw, 100vw" class="aspect-[4/3] w-full rounded-card object-cover" />
+              <Image src={img} alt={`${d.title}, fotka ${i + 2}`} widths={[600, 1000]} sizes="(min-width: 561px) 50vw, 100vw" class="aspect-[4/3] w-full rounded-card object-cover shadow-float" />
             ))}
           </div>
         )}

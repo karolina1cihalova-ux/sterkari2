@@ -10,7 +10,7 @@ const { item } = Astro.props;
 const d = item.data;
 ---
 <a class="card-link group grid gap-2.5 text-inherit no-underline min-[561px]:gap-3" href={`/inspirace/${item.id}/`}>
-  <span class="relative block aspect-square max-w-full overflow-hidden rounded-card bg-line min-[561px]:aspect-[4/3]">
+  <span class="frame relative block aspect-square max-w-full overflow-hidden rounded-card bg-line shadow-card min-[561px]:aspect-[4/3]">
     <span class="photo block h-full w-full">
       <InstallationPhoto photo={d.cover} alt={d.title} structure={d.structure} shade={d.shade} />
     </span>
@@ -26,8 +26,10 @@ const d = item.data;
   /* The photo leans in slightly on hover (mouse only), the arrow nudges toward the click */
   .photo { transition: transform 400ms var(--ease-out-strong); }
   .go { transition: transform 250ms var(--ease-out-strong); }
+  .frame { transition: box-shadow 300ms var(--ease-hover); }
   @media (hover: hover) and (pointer: fine) {
     .card-link:hover .photo { transform: scale(1.03); }
+    .card-link:hover .frame { box-shadow: var(--shadow-float); }
     .card-link:hover .go { transform: translateX(3px); }
   }
   .card-link:active .photo { transform: scale(0.99); transition-duration: 160ms; }
