@@ -2,7 +2,7 @@
 title: Rozpraskaná stěna
 summary: Světle šedá stěrka s výraznými tmavými prasklinami. Stěna, která vypadá jako vyschlá země.
 cover: ./rozpraskana-stena/cover.jpg
-order: -1
+order: -4
 ---
 
 ## Vzhled

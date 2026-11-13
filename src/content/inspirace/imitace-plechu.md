@@ -2,7 +2,7 @@
 title: Imitace plechu
 summary: Stěrka, která vypadá jako starý kovový plech. Měděné a hnědé tóny, nýty a modrozelená patina.
 cover: ./imitace-plechu/cover.jpg
-order: 0
+order: -3
 ---
 
 ## Vzhled
