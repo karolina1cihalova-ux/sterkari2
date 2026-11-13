@@ -1,5 +1,6 @@
 ---
 import Arrow from './Arrow.astro';
+import { cz } from '../data/sterky';
 
 // Line icons (24×24, drawn with the current text colour)
 const icons = {
@@ -14,10 +15,10 @@ const icons = {
 };
 
 const facts = [
-  { icon: icons.den, title: '1 den', text: 'typicky 9:00–17:00' },
+  { icon: icons.den, title: '1 den', text: 'Podle náročnosti 2 až 8 hodin' },
   { icon: icons.lide, title: 'Max. 6 lidí', text: 'na jeden termín' },
   { icon: icons.material, title: 'Materiál v ceně', text: 'balíček na vaši stěnu' },
-  { icon: icons.showroom, title: 'Showroom Praha', text: 'reálná místnost' },
+  { icon: icons.showroom, title: 'Showroom Praha a Valašské Meziříčí', text: 'Nebo u vás doma, kdekoliv v ČR (od 100 m²)' },
 ];
 ---
 <section class="bg-paper pt-[72px] max-[560px]:pt-12">
@@ -41,8 +42,8 @@ const facts = [
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={f.icon} />
           </span>
           <span class="grid min-w-0 gap-0.5">
-            <b class="text-[17px] font-bold text-ink">{f.title}</b>
-            <span class="text-sm">{f.text}</span>
+            <b class="text-[17px] font-bold text-ink">{cz(f.title)}</b>
+            <span class="text-sm">{cz(f.text)}</span>
           </span>
         </div>
       ))}
