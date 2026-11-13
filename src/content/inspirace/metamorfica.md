@@ -1,7 +1,7 @@
 ---
-title: Rigatta
+title: Metamorfica
 summary: Metalická stěrka s viditelnými tahy hladítka. Hnědé, fialové a zlatavé tóny, které se na světle mění.
-cover: ./rigatta/cover.jpg
+cover: ./metamorfica/cover.jpg
 order: 0
 ---
 
