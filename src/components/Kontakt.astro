@@ -22,7 +22,10 @@ const label = 'text-[13px] font-semibold text-ink';
 
     <form class="grid gap-[18px] rounded-card bg-white p-8 shadow-float max-[560px]:p-[22px]" id="form" novalidate>
       <div class="flex items-center gap-3 rounded-lg bg-paper px-3 py-2.5 text-sm text-ink" id="chosen" hidden>
-        <span class="block size-[34px] flex-none overflow-hidden rounded-md"><Wall shade="#D4C4A8" structure="benatsky" /></span>
+        <span class="relative block size-[34px] flex-none overflow-hidden rounded-md">
+          <Wall shade="#D4C4A8" structure="benatsky" />
+          <img class="absolute inset-0 h-full w-full object-cover" id="chImg" alt="" hidden />
+        </span>
         <span>Láká mě: <b id="chName"></b></span>
         <button class="ml-auto cursor-pointer border-0 bg-transparent text-[13px] text-muted underline underline-offset-[3px]" type="button" id="chClear">Odebrat</button>
       </div>
@@ -80,10 +83,18 @@ const label = 'text-[13px] font-semibold text-ink';
     const h = SHADES[shade];
     chosen.querySelector('[data-base]')!.setAttribute('fill', h.hex);
     chosen.querySelector('[data-tex]')!.setAttribute('filter', `url(#t-${s.id})`);
-    document.getElementById('chName')!.textContent = `${s.name} · ${h.name}`;
-    hiddenInput.value = `${s.name} · ${h.name}`;
+    return showNamed(`${s.name} · ${h.name}`);
+  };
+
+  // A technique with a real photo (from the Stěrky tabs): its photo replaces the texture swatch
+  const chImg = document.getElementById('chImg') as HTMLImageElement;
+  const showNamed = (name: string, img?: string | null) => {
+    chImg.hidden = !img;
+    if (img) chImg.src = img;
+    document.getElementById('chName')!.textContent = name;
+    hiddenInput.value = name;
     chosen.hidden = false;
-    return `${s.name} · ${h.name}`;
+    return name;
   };
 
   // Coming from an installation page ("Chci se to naučit"): /?struktura=beton&odstin=antracit#kontakt
@@ -94,8 +105,9 @@ const label = 'text-[13px] font-semibold text-ink';
 
   // A stucco picked in the Stěrky section shows up here
   window.addEventListener('sterka-pick', (e) => {
-    const { structure, shade } = (e as CustomEvent<{ structure: number; shade: number }>).detail;
-    toast({ type: 'success', message: 'Přidáno do rezervace', description: showChoice(structure, shade) });
+    const d = (e as CustomEvent<{ structure?: number; shade?: number; name?: string; img?: string | null }>).detail;
+    const label = d.name ? showNamed(d.name, d.img) : showChoice(d.structure!, d.shade!);
+    toast({ type: 'success', message: 'Přidáno do rezervace', description: label });
     document.getElementById('kontakt')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
     setTimeout(() => (document.getElementById('name') as HTMLInputElement).focus({ preventScroll: true }), reduce ? 0 : 600);
   });

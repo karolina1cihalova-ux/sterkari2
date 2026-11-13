@@ -1,10 +1,19 @@
 ---
 import Wall from './Wall.astro';
 import Arrow from './Arrow.astro';
-import { STRUCTURES, SHADES, LEVEL_LABEL } from '../data/sterky';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { STRUCTURES, SHADES, LEVEL_LABEL, cz } from '../data/sterky';
 
 const s = STRUCTURES[0];
 const h = SHADES[0];
+
+// Techniques shown with a real photo (Inspirace entries with a cover but none of our six stuccos).
+// They come after the six stuccos as extra tabs; no shade picker for them.
+const photos = (await getCollection('inspirace'))
+  .filter((e) => e.data.cover && !e.data.structure)
+  .sort((a, b) => a.data.order - b.data.order);
+const photoData = photos.map((p) => ({ id: p.id, name: p.data.title, desc: cz(p.data.summary) }));
 ---
 <section class="bg-paper py-24 max-[900px]:py-[72px]" id="sterky">
   <div class="wrap">
@@ -14,7 +23,7 @@ const h = SHADES[0];
     </div>
 
     <div class="-mx-3 mb-5 overflow-x-auto px-3 pt-1 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <div class="relative inline-flex gap-1 rounded-xl bg-white p-1 shadow-card" role="tablist" aria-label="Struktura stěrky" id="tabs">
+      <div class="relative inline-flex gap-1 rounded-xl bg-white p-1 shadow-card" role="tablist" aria-label="Struktura stěrky" id="tabs" data-photos={JSON.stringify(photoData)}>
         <span class="tab-ind absolute inset-y-1 left-0 rounded-lg bg-ink" id="tabInd" aria-hidden="true"></span>
         {STRUCTURES.map((st, i) => (
           <button
@@ -28,12 +37,27 @@ const h = SHADES[0];
             data-index={i}
           >{st.name}</button>
         ))}
+        {photos.map((p, j) => (
+          <button
+            class="tab relative z-[1] cursor-pointer whitespace-nowrap rounded-lg border-0 bg-transparent px-[18px] py-2.5 text-sm font-semibold text-ink aria-selected:text-white"
+            type="button"
+            role="tab"
+            id={`tab-${p.id}`}
+            aria-controls="panel"
+            aria-selected="false"
+            tabindex={-1}
+            data-index={STRUCTURES.length + j}
+          >{p.data.title}</button>
+        ))}
       </div>
     </div>
 
     <div class="grid items-start gap-9 min-[901px]:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] min-[901px]:gap-12">
       <div class="relative aspect-[4/3] max-w-full overflow-hidden rounded-card shadow-float" id="preview" aria-hidden="true">
         <Wall shade={h.hex} structure={s.id} />
+        {photos.map((p, j) => (
+          <Image src={p.data.cover!} alt="" widths={[600, 900, 1300]} sizes="(min-width: 901px) 55vw, 100vw" class="pv-photo absolute inset-0 h-full w-full object-cover" data-photo={j} />
+        ))}
         <span class="wall-tag" id="pvTag">{s.name} · {h.name}</span>
       </div>
 
@@ -43,7 +67,8 @@ const h = SHADES[0];
           <small class="mt-1.5 block text-base font-medium tracking-normal text-muted" id="sShade">v&nbsp;odstínu {h.name}</small>
         </h3>
         <p class="text-[16.5px]" id="sDesc">{s.desc}</p>
-        <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-y border-line py-4 text-[14.5px]">
+        <a class="back inline-flex items-center gap-2 justify-self-start text-sm font-semibold text-ink underline decoration-accent underline-offset-4" id="sLink" href="/#inspirace" hidden>Prohlédnout realizaci</a>
+        <dl id="sAttrs" class="m-0 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-y border-line py-4 text-[14.5px]">
           <dt class="text-muted">Vzhled</dt><dd class="m-0 font-medium text-ink" id="sLook">{s.look}</dd>
           <dt class="text-muted">Kam se hodí</dt><dd class="m-0 font-medium text-ink" id="sRooms">{s.rooms}</dd>
           <dt class="text-muted">Náročnost</dt>
@@ -53,7 +78,7 @@ const h = SHADES[0];
             </span><span id="sLevel">{LEVEL_LABEL[s.level]}</span>
           </dd>
         </dl>
-        <div>
+        <div id="shadeBlock">
           <p class="text-[13px] font-semibold text-ink" id="shadeLabel">Odstín</p>
           <div class="mt-2.5 grid grid-cols-6 gap-2.5 max-[560px]:grid-cols-3" id="shades" role="group" aria-labelledby="shadeLabel">
             {SHADES.map((sh, i) => (
@@ -68,7 +93,7 @@ const h = SHADES[0];
         </div>
         <div class="flex flex-wrap items-center gap-3">
           <button class="btn btn-dark" type="button" id="pickBtn">Chci tuhle stěrku<Arrow /></button>
-          <span class="text-[13px] text-muted">Textury jsou ilustrační, skutečné vzorky uvidíte ve showroomu.</span>
+          <span class="text-[13px] text-muted" id="pickNote">Textury jsou ilustrační, skutečné vzorky uvidíte ve showroomu.</span>
         </div>
       </div>
     </div>
@@ -84,6 +109,9 @@ const h = SHADES[0];
   .shade:active { transform: scale(0.96); }
   .shade .sw { outline: 2px solid transparent; outline-offset: 2px; transition: outline-color 180ms ease; }
   .shade[aria-pressed='true'] .sw { outline-color: var(--color-accent); }
+  /* Real photos sit over the generated wall; only the chosen one is visible */
+  .pv-photo { opacity: 0; }
+  .pv-photo.on { opacity: 1; }
   @media (prefers-reduced-motion: reduce) {
     .tab-ind { transition: none; }
     .tab:active, .shade:active { transform: none; }
@@ -117,15 +145,42 @@ const h = SHADES[0];
     });
   };
 
+  // Techniques with a real photo, listed after the six stuccos
+  type Photo = { id: string; name: string; desc: string };
+  const photos: Photo[] = JSON.parse(tabsEl.dataset.photos || '[]');
+  const photoImgs = [...preview.querySelectorAll<HTMLElement>('.pv-photo')];
+  const photoAt = (i: number) => (i >= STRUCTURES.length ? photos[i - STRUCTURES.length] : undefined);
+
   const render = (animate: boolean) => {
-    const s = STRUCTURES[state.s];
-    const h = SHADES[state.h];
     tabs.forEach((t, i) => {
       t.setAttribute('aria-selected', String(i === state.s));
       t.tabIndex = i === state.s ? 0 : -1;
     });
-    $('panel').setAttribute('aria-labelledby', `tab-${s.id}`);
+    tabs[state.s].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
     moveInd();
+
+    const photo = photoAt(state.s);
+    photoImgs.forEach((img, j) => img.classList.toggle('on', photo !== undefined && j === state.s - STRUCTURES.length));
+    $('sShade').hidden = !!photo;
+    $('sAttrs').hidden = !!photo;
+    $('shadeBlock').hidden = !!photo;
+    $('sLink').hidden = !photo;
+    $('pickNote').textContent = photo
+      ? 'Skutečná realizace. Odstín a postup doladíme spolu na workshopu.'
+      : 'Textury jsou ilustrační, skutečné vzorky uvidíte ve showroomu.';
+    if (photo) {
+      $('panel').setAttribute('aria-labelledby', `tab-${photo.id}`);
+      $('pvTag').textContent = photo.name;
+      $('sName').textContent = photo.name;
+      $('sDesc').textContent = photo.desc;
+      $('sLink').setAttribute('href', `/inspirace/${photo.id}/`);
+      if (animate) settle(preview);
+      return;
+    }
+
+    const s = STRUCTURES[state.s];
+    const h = SHADES[state.h];
+    $('panel').setAttribute('aria-labelledby', `tab-${s.id}`);
     preview.querySelector('[data-base]')!.setAttribute('fill', h.hex);
     preview.querySelector('[data-tex]')!.setAttribute('filter', `url(#t-${s.id})`);
     $('pvTag').textContent = `${s.name} · ${h.name}`;
@@ -157,7 +212,11 @@ const h = SHADES[0];
 
   // "Chci tuhle stěrku" → attach the choice to the booking form
   $('pickBtn').addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('sterka-pick', { detail: { structure: state.s, shade: state.h } }));
+    const photo = photoAt(state.s);
+    const detail = photo
+      ? { name: photo.name, img: (photoImgs[state.s - STRUCTURES.length] as HTMLImageElement).currentSrc }
+      : { structure: state.s, shade: state.h };
+    window.dispatchEvent(new CustomEvent('sterka-pick', { detail }));
   });
 
   window.addEventListener('resize', moveInd);
