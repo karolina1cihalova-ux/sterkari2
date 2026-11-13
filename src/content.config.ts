@@ -21,6 +21,10 @@ const inspirace = defineCollection({
       structure: z.enum(['benatsky', 'beton', 'mikrocement', 'vapenna', 'tadelakt', 'hlinena']).optional(),
       shade: z.enum(['piskova', 'mlha', 'oliva', 'krida', 'terakota', 'antracit']).optional(),
       summary: z.string(),
+      /** Náročnost 1–3 (snadná / střední / náročnější), shown in Stěrky */
+      level: z.number().int().min(1).max(3).optional(),
+      /** "Kam se hodí", shown in Stěrky, e.g. "Obývák, chodba, kanceláře" */
+      suits: z.string().optional(),
       place: z.string().optional(),
       area: z.string().optional(),
       duration: z.string().optional(),

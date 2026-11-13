@@ -7,7 +7,7 @@
 import Arrow from './Arrow.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import { cz } from '../data/sterky';
+import { cz, LEVEL_LABEL } from '../data/sterky';
 
 const photos = (await getCollection('inspirace'))
   .filter((e) => e.data.cover && !e.data.structure)
@@ -37,6 +37,8 @@ const first = photos[0];
             data-id={p.id}
             data-name={p.data.title}
             data-desc={cz(p.data.summary)}
+            data-suits={p.data.suits ?? ''}
+            data-level={p.data.level ?? 0}
           >{p.data.title}</button>
         ))}
       </div>
@@ -53,6 +55,19 @@ const first = photos[0];
       <div class="grid min-w-0 gap-[22px]" role="tabpanel" id="panel" aria-labelledby={`tab-${first.id}`}>
         <h3 class="text-[30px] leading-[1.1] font-bold tracking-[-0.02em]" id="sName">{first.data.title}</h3>
         <p class="text-[16.5px]" id="sDesc">{cz(first.data.summary)}</p>
+        <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-y border-line py-4 text-[14.5px]">
+          <div class="contents" id="rowSuits" hidden={!first.data.suits}>
+            <dt class="text-muted">Kam se hodí</dt><dd class="m-0 font-medium text-ink" id="sSuits">{first.data.suits}</dd>
+          </div>
+          <div class="contents" id="rowLevel" hidden={!first.data.level}>
+            <dt class="text-muted">Náročnost</dt>
+            <dd class="m-0 font-medium text-ink">
+              <span class="mr-2 inline-flex gap-1 align-middle" id="sDots" aria-hidden="true">
+                {[1, 2, 3].map((k) => <i class:list={['size-2 rounded-full', k <= (first.data.level ?? 0) ? 'bg-accent' : 'bg-line']}></i>)}
+              </span><span id="sLevel">{LEVEL_LABEL[first.data.level ?? 0]}</span>
+            </dd>
+          </div>
+        </dl>
         <a class="justify-self-start text-sm font-semibold text-ink underline decoration-accent underline-offset-4" id="sLink" href={`/inspirace/${first.id}/`}>Prohlédnout realizaci</a>
         <div class="flex flex-wrap items-center gap-3 border-t border-line pt-6">
           <button class="btn btn-dark" type="button" id="pickBtn">Chci tuhle stěrku<Arrow /></button>
@@ -79,6 +94,8 @@ const first = photos[0];
 </style>
 
 <script>
+  import { LEVEL_LABEL } from '../data/sterky';
+
   const tabsEl = document.getElementById('tabs');
   if (tabsEl) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -120,6 +137,15 @@ const first = photos[0];
       $('sName').textContent = t.dataset.name!;
       $('sDesc').textContent = t.dataset.desc!;
       $('sLink').setAttribute('href', `/inspirace/${t.dataset.id}/`);
+      const level = Number(t.dataset.level);
+      $('rowSuits').hidden = !t.dataset.suits;
+      $('sSuits').textContent = t.dataset.suits!;
+      $('rowLevel').hidden = !level;
+      $('sLevel').textContent = LEVEL_LABEL[level] ?? '';
+      [...$('sDots').children].forEach((d, k) => {
+        d.classList.toggle('bg-accent', k < level);
+        d.classList.toggle('bg-line', k >= level);
+      });
       settle();
     };
 

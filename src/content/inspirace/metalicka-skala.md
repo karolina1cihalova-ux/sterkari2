@@ -1,6 +1,8 @@
 ---
 title: Metalická skála
 summary: Plastická stěrka s kovovým leskem. Měděné plochy a tyrkysové prohlubně, které se na světle třpytí.
+level: 3
+suits: Obývák, ložnice, akcentová stěna
 cover: ./metalicka-skala/cover.jpg
 order: -1
 ---
