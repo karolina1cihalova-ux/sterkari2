@@ -1,24 +1,31 @@
 ---
-const steps = [
-  { title: 'Rezervace workshopu', text: 'Vyplníte krátký formulář, domluvíme termín ve showroomu a pošleme vám potvrzení e-mailem.' },
-  { title: 'Příprava materiálu', text: 'Sestavíme balíček stěrky, nářadí a vzorků podle vašeho odstínu. Všechno je připravené na den workshopu.' },
-  { title: 'Den ve showroomu', text: 'V malé skupině projdete přípravu podkladu, nanášení, broušení a finální úpravu na cvičné ploše.' },
-  { title: 'Aplikace doma', text: 'Na vlastní stěně to zvládnete sami, s postupem z workshopu a možností konzultace, když něco nejde podle plánu.' },
+import Arrow from './Arrow.astro';
+import { cz } from '../data/sterky';
+
+// Six steps from the first enquiry to returning the tools. `text` is the grey line under the title.
+const steps: { title: string; text?: string; cta?: boolean }[] = [
+  { title: 'Podklady k cenové nabídce', cta: true },
+  { title: 'Vypracování cenové nabídky', text: 'Zašleme vám cenovou nabídku na materiál včetně workshopu zdarma.' },
+  { title: 'Odsouhlasení cenové nabídky a domluva na termín workshopu' },
+  { title: 'Workshop pro zvolenou stěrku u nás na vzorkovně', text: 'Praha / Valašské Meziříčí, případně na místě u klienta po dohodě. Odběr materiálu na realizaci a zapůjčení nářadí.' },
+  { title: 'Realizace svépomocí', text: 'Realizaci provádíte svépomocí a v případě potřeby nám můžete zavolat pro telefonickou konzultaci během realizace.' },
+  { title: 'Vrácení zapůjčeného nářadí', text: 'Zpět balíčkem poštou na vaši adresu a případně zaslání videa s výsledkem realizace.' },
 ];
 ---
 <section class="bg-paper py-24 max-[900px]:py-[72px]" id="jak-to-funguje">
   <div class="wrap">
-    <!-- Split head: heading left, intro aligned to the second half of the steps -->
-    <div class="sec-head min-[901px]:mb-14 min-[901px]:max-w-none min-[901px]:grid-cols-2 min-[901px]:items-end min-[901px]:gap-8">
+    <!-- Split head: heading in the first step column, intro over the other two -->
+    <div class="sec-head min-[901px]:mb-14 min-[901px]:max-w-none min-[901px]:grid-cols-3 min-[901px]:items-end min-[901px]:gap-8">
       <h2>Jak to funguje</h2>
-      <p class="max-w-[30em]">Od prvního dotazu po hotovou stěnu u&nbsp;vás doma. Jednoduchý postup ve čtyřech krocích.</p>
+      <p class="max-w-[30em] min-[901px]:col-span-2">{cz('Od prvního dotazu po hotovou stěnu u vás doma. Jednoduchý postup v šesti krocích.')}</p>
     </div>
-    <ol class="m-0 grid list-none grid-cols-1 gap-8 p-0 min-[561px]:grid-cols-2 min-[901px]:grid-cols-4">
+    <ol class="m-0 grid list-none grid-cols-1 gap-x-8 gap-y-10 p-0 min-[561px]:grid-cols-2 min-[901px]:grid-cols-3 min-[901px]:gap-y-14">
       {steps.map((step, i) => (
         <li class="grid min-w-0 content-start gap-2.5 border-t-2 border-ink pt-5">
           <span class="text-[40px] leading-none font-bold tracking-[-0.02em] text-accent tabular-nums">{i + 1}</span>
-          <h3 class="text-lg font-bold">{step.title}</h3>
-          <p class="text-[15px]">{step.text}</p>
+          <h3 class="text-lg leading-snug font-bold">{cz(step.title)}</h3>
+          {step.text && <p class="text-[15px] text-muted">{cz(step.text)}</p>}
+          {step.cta && <a class="btn btn-line mt-1.5 justify-self-start" href="#kontakt">Cenová nabídka<Arrow dir="down" /></a>}
         </li>
       ))}
     </ol>
