@@ -1,5 +1,6 @@
 ---
-import Wall from './Wall.astro';
+import { Image } from 'astro:assets';
+import photo from '../assets/o-nas-pri-praci.jpg';
 
 const points = [
   { title: 'Naučíme vás to', text: 'Celý postup na jednom workshopu, od podkladu po finální vrstvu.' },
@@ -9,9 +10,8 @@ const points = [
 ---
 <section class="py-24 max-[900px]:py-[72px]" id="o-nas">
   <div class="wrap grid items-start gap-9 min-[901px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] min-[901px]:gap-14">
-    <div class="relative aspect-[16/10] max-w-full overflow-hidden rounded-card shadow-float min-[901px]:aspect-[4/5]" aria-hidden="true">
-      <Wall shade="#C4785A" structure="hlinena" />
-      <span class="wall-tag">Místo pro fotku týmu</span>
+    <div class="relative aspect-[4/5] max-w-full overflow-hidden rounded-card bg-line shadow-float max-[900px]:max-h-[560px] max-[900px]:w-full">
+      <Image src={photo} alt="Stěrkař při práci: houbou dotváří metalickou stěrku na stěně" widths={[500, 800, 1100]} sizes="(min-width: 901px) 45vw, 100vw" class="block h-full w-full object-cover object-[60%_30%]" />
     </div>
     <div class="grid min-w-0 gap-[18px] text-[17px]">
       <h2 class="text-[clamp(30px,3.6vw,40px)] leading-[1.1] font-bold tracking-[-0.02em]">Krásná stěrka není jen pro řemeslníky</h2>
@@ -25,7 +25,7 @@ const points = [
         ))}
       </ul>
       <p class="rounded-lg border border-dashed border-[#d3ccc1] px-3.5 py-3 text-sm text-muted">
-        Sem doplníme vaše jména, fotku a&nbsp;krátký příběh, proč jste Stěrkaře založili.
+        Sem doplníme vaše jména a&nbsp;krátký příběh, proč jste Stěrkaře založili.
       </p>
     </div>
   </div>
