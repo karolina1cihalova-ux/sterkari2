@@ -22,8 +22,8 @@ interface Props {
 const { entry, all } = Astro.props;
 const d = entry.data;
 const { Content } = await render(entry);
-const structure = structureById(d.structure);
-const shade = shadeById(d.shade);
+const structure = d.structure ? structureById(d.structure) : undefined;
+const shade = d.shade ? shadeById(d.shade) : undefined;
 
 // Same room first, then the rest, by order
 const others = all
@@ -32,13 +32,14 @@ const others = all
   .slice(0, 3);
 
 const facts = [
-  { label: 'Místnost', value: ROOMS[d.room] },
+  d.room && { label: 'Místnost', value: ROOMS[d.room] },
   d.place && { label: 'Místo', value: d.place },
   d.area && { label: 'Plocha', value: d.area },
   d.duration && { label: 'Doba práce', value: d.duration },
 ].filter(Boolean) as { label: string; value: string }[];
 
-const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
+// Prefill the booking form only when the stucco is one of ours
+const learnHref = structure && shade ? `/?struktura=${structure.id}&odstin=${shade.id}#kontakt` : "/#kontakt";
 ---
 <Layout title={`${d.title} | Inspirace | STĚRKAŘI.`} description={d.summary}>
   <Header />
@@ -50,18 +51,18 @@ const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
           Zpět na inspiraci
         </a>
         <div class="mt-8 grid max-w-[760px] gap-4">
-          <span class="justify-self-start rounded-full bg-white px-3 py-1.5 text-[11px] font-bold tracking-[0.14em] text-ink uppercase">{ROOMS[d.room]}</span>
+          {d.room && <span class="justify-self-start rounded-full bg-white px-3 py-1.5 text-[11px] font-bold tracking-[0.14em] text-ink uppercase">{ROOMS[d.room]}</span>}
           <h1 class="text-[clamp(34px,4.6vw,54px)] leading-[1.05] font-bold tracking-[-0.03em]">{cz(d.title)}</h1>
           <p class="text-[19px] leading-[1.55]">{cz(d.summary)}</p>
         </div>
-        <dl class="mt-10 grid grid-cols-2 border-t border-line min-[901px]:grid-cols-4">
+        {facts.length > 0 && <dl class="mt-10 grid grid-cols-2 border-t border-line min-[901px]:grid-cols-4">
           {facts.map((f) => (
             <div class="grid min-w-0 gap-0.5 pt-5 pr-5 pb-1">
               <dt class="text-sm">{f.label}</dt>
               <dd class="m-0 text-[17px] font-bold text-ink">{f.value}</dd>
             </div>
           ))}
-        </dl>
+        </dl>}
       </div>
     </section>
 
@@ -82,6 +83,7 @@ const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
           </article>
 
           <aside class="grid gap-5 rounded-card bg-paper p-6 shadow-card min-[901px]:sticky min-[901px]:top-[96px]">
+            {structure && shade ? (<>
             <p class="text-[13px] font-semibold tracking-[0.14em] text-muted uppercase">Použitá stěrka</p>
             <div class="flex items-center gap-4">
               <span class="block size-16 flex-none overflow-hidden rounded-lg shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
@@ -101,6 +103,9 @@ const learnHref = `/?struktura=${d.structure}&odstin=${d.shade}#kontakt`;
                 </span>{LEVEL_LABEL[structure.level]}
               </dd>
             </dl>
+            </>) : (
+              <p class="text-xl leading-snug font-bold text-ink">Chcete podobnou stěnu?</p>
+            )}
             <div class="grid gap-2.5">
               <a class="btn btn-dark" href={learnHref}>Chci se to naučit<Arrow /></a>
               <a class="btn btn-line" href="/#sterky">Prohlédnout stěrky<Arrow /></a>

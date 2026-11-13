@@ -8,8 +8,8 @@ import { shadeById } from '../data/sterky';
 interface Props {
   photo?: ImageMetadata;
   alt: string;
-  structure: string;
-  shade: string;
+  structure?: string;
+  shade?: string;
   widths?: number[];
   sizes?: string;
   loading?: 'eager' | 'lazy';
@@ -19,5 +19,5 @@ const { photo, alt, structure, shade, widths = [480, 800, 1200], sizes = '(min-w
 {photo ? (
   <Image src={photo} alt={alt} widths={widths} sizes={sizes} loading={loading} class="block h-full w-full object-cover" />
 ) : (
-  <Wall shade={shadeById(shade).hex} structure={structure} />
+  <Wall shade={shadeById(shade ?? 'krida').hex} structure={structure ?? 'plain'} />
 )}

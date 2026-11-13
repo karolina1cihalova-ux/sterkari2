@@ -16,9 +16,10 @@ const inspirace = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      room: z.enum(['obyvak', 'koupelna', 'chodba']),
-      structure: z.enum(['benatsky', 'beton', 'mikrocement', 'vapenna', 'tadelakt', 'hlinena']),
-      shade: z.enum(['piskova', 'mlha', 'oliva', 'krida', 'terakota', 'antracit']),
+      /** Optional: without a room the installation shows only under "Vše" */
+      room: z.enum(['obyvak', 'koupelna', 'chodba']).optional(),
+      structure: z.enum(['benatsky', 'beton', 'mikrocement', 'vapenna', 'tadelakt', 'hlinena']).optional(),
+      shade: z.enum(['piskova', 'mlha', 'oliva', 'krida', 'terakota', 'antracit']).optional(),
       summary: z.string(),
       place: z.string().optional(),
       area: z.string().optional(),
