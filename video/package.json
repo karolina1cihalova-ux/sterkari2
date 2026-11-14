@@ -6,10 +6,17 @@
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "render": "remotion render src/index.ts Sterkari out/sterkari-30s.mp4 --crf 17 --jpeg-quality 95",
+    "render:level1": "remotion render src/index.ts Level1 out/sterkari-level1.mp4 --crf 17 --jpeg-quality 95",
+    "render:tutorial": "remotion render src/index.ts Tutorial out/sterkari-tutorial.mp4 --crf 17 --jpeg-quality 95",
+    "render:pohadka": "remotion render src/index.ts Pohadka out/sterkari-pohadka.mp4 --crf 17 --jpeg-quality 95",
+    "render:mini": "remotion render src/index.ts Mini out/sterkari-mini-10s.mp4 --crf 17 --jpeg-quality 95",
+    "sfx": "node sfx.mjs",
     "stills": "node stills.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/pixelify-sans": "^5.3.0",
     "@remotion/bundler": "4.0.543",
     "@remotion/cli": "4.0.543",
     "@remotion/renderer": "4.0.543",

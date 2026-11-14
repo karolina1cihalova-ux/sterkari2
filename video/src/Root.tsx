@@ -1,10 +1,13 @@
-import '@fontsource-variable/dm-sans';
-import { useEffect, useState } from 'react';
-import { AbsoluteFill, Composition, Sequence, continueRender, delayRender } from 'remotion';
+import { AbsoluteFill, Composition, Sequence } from 'remotion';
+import { useFonts } from './fonts';
+import { Level1 } from './level1/Level1';
+import { MINI_FRAMES, Mini } from './mini/Mini';
+import { Pohadka } from './pohadka/Pohadka';
 import { End } from './scenes/End';
 import { Facts } from './scenes/Facts';
 import { Hook } from './scenes/Hook';
 import { Turn } from './scenes/Turn';
+import { Tutorial } from './tutorial/Tutorial';
 import { C, FONT, FPS, H, T, W, WIPE } from './theme';
 
 /**
@@ -13,14 +16,7 @@ import { C, FONT, FPS, H, T, W, WIPE } from './theme';
  * All copy comes from the site (hero headline, hero facts, workshop section).
  */
 const Video: React.FC = () => {
-  // Hold rendering until DM Sans (latin + latin-ext for Czech) is ready
-  const [handle] = useState(() => delayRender('DM Sans'));
-  useEffect(() => {
-    document.fonts
-      .load(`700 100px "DM Sans Variable"`, 'Stěrkaři abc')
-      .then(() => document.fonts.ready)
-      .then(() => continueRender(handle));
-  }, [handle]);
+  useFonts();
 
   return (
     <AbsoluteFill
@@ -50,6 +46,18 @@ const Video: React.FC = () => {
   );
 };
 
-export const Root: React.FC = () => (
-  <Composition id="Sterkari" component={Video} durationInFrames={T.total} fps={FPS} width={W} height={H} />
-);
+export const Root: React.FC = () => {
+  const size = { durationInFrames: T.total, fps: FPS, width: W, height: H };
+  return (
+    <>
+      {/* Photo version */}
+      <Composition id="Sterkari" component={Video} {...size} />
+      {/* Animated versions, no photos */}
+      <Composition id="Level1" component={Level1} {...size} />
+      <Composition id="Tutorial" component={Tutorial} {...size} />
+      <Composition id="Pohadka" component={Pohadka} {...size} />
+      {/* 10 s attention-grabber */}
+      <Composition id="Mini" component={Mini} {...size} durationInFrames={MINI_FRAMES} />
+    </>
+  );
+};
