@@ -1,5 +1,7 @@
 # build output
 dist/
+# rendered video and test frames (video/ is the Remotion project)
+video/out/
 # generated types
 .astro/
 
