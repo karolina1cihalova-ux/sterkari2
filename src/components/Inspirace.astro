@@ -1,19 +1,28 @@
 ---
 import { getCollection } from 'astro:content';
 import InstallationCard from './InstallationCard.astro';
+import { ROOMS } from '../data/sterky';
 
-// All installations, no filter: browsing by room happens in the Stěrky section
 const installations = (await getCollection('inspirace')).sort((a, b) => a.data.order - b.data.order);
+const filters = [{ room: 'vse', label: 'Vše' }, ...Object.entries(ROOMS).map(([room, label]) => ({ room, label }))];
 ---
 <section class="py-24 max-[900px]:py-[72px]" id="inspirace">
   <div class="wrap">
-    <div class="sec-head mb-7 min-[901px]:mb-9">
-      <h2>Inspirace</h2>
+    <!-- Heading left, filters on the same line at the right (stacked on small screens) -->
+    <div class="mb-7 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 min-[901px]:mb-9">
+      <div class="sec-head mb-0">
+        <h2>Inspirace</h2>
+      </div>
+      <div class="flex flex-wrap gap-2" role="group" aria-label="Filtrovat podle místnosti" id="filters">
+        {filters.map((f, i) => (
+          <button class="pill" type="button" data-room={f.room} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
+        ))}
+      </div>
     </div>
 
     <ul class="m-0 grid list-none grid-cols-2 gap-x-3 gap-y-6 p-0 min-[561px]:gap-5 min-[901px]:grid-cols-3" id="grid">
       {installations.map((it) => (
-        <li><InstallationCard item={it} /></li>
+        <li class="card" data-room={it.data.room}><InstallationCard item={it} /></li>
       ))}
     </ul>
     {installations.some((it) => it.data.sample) && (
@@ -21,3 +30,26 @@ const installations = (await getCollection('inspirace')).sort((a, b) => a.data.o
     )}
   </div>
 </section>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const filters = document.getElementById('filters')!;
+  const cards = [...document.querySelectorAll<HTMLElement>('#grid .card')];
+
+  filters.addEventListener('click', (e) => {
+    const pill = (e.target as HTMLElement).closest<HTMLButtonElement>('.pill');
+    if (!pill || pill.getAttribute('aria-pressed') === 'true') return;
+    const room = pill.dataset.room;
+    filters.querySelectorAll('.pill').forEach((p) => p.setAttribute('aria-pressed', String(p === pill)));
+    const shown = cards.filter((c) => {
+      const on = room === 'vse' || c.dataset.room === room;
+      c.hidden = !on;
+      return on;
+    });
+    // Short stagger on the cards that stay
+    if (!reduce) shown.forEach((c, k) => c.animate(
+      [{ opacity: 0, transform: 'translateY(8px) scale(0.98)' }, { opacity: 1, transform: 'none' }],
+      { duration: 300, delay: k * 50, easing: 'cubic-bezier(0.23, 1, 0.32, 1)', fill: 'backwards' },
+    ));
+  });
+</script>
