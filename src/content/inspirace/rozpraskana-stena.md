@@ -2,7 +2,7 @@
 title: Rozpraskaná stěna
 summary: Světle šedá stěrka s výraznými tmavými prasklinami. Stěna, která vypadá jako vyschlá země.
 level: 2
-suits: Obývák, chodba, akcentová stěna
+fits: [obyvak, chodba, komercni]
 cover: ./rozpraskana-stena/cover.jpg
 order: -4
 ---

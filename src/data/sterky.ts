@@ -99,3 +99,18 @@ export const NAV = [
   { href: '/#sterky', label: 'Stěrky' },
   { href: '/#o-nas', label: 'O nás' },
 ];
+
+// Rooms for the Stěrky section (which structures fit where). Order = order of the tabs.
+export const STERKY_ROOMS = {
+  obyvak: 'Obývák',
+  loznice: 'Ložnice',
+  kuchyn: 'Kuchyň',
+  koupelna: 'Koupelna',
+  chodba: 'Chodba',
+  komercni: 'Komerční prostory',
+} as const;
+export type SterkyRoomId = keyof typeof STERKY_ROOMS;
+
+/** "Obývák, chodba, komerční prostory" */
+export const fitsLabel = (fits: readonly SterkyRoomId[]) =>
+  fits.map((f, i) => (i === 0 ? STERKY_ROOMS[f] : STERKY_ROOMS[f].toLowerCase())).join(', ');

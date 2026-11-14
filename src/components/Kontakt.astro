@@ -1,6 +1,15 @@
 ---
 import Wall from './Wall.astro';
 import Arrow from './Arrow.astro';
+import { getImage } from 'astro:assets';
+import { getSterky } from '../lib/sterky';
+
+// Real structures, so /?stena=<id>#kontakt can show the chosen one with a small photo
+const sterky = await Promise.all((await getSterky()).map(async (s) => ({
+  id: s.id,
+  name: s.data.title,
+  img: (await getImage({ src: s.data.cover!, width: 96 })).src,
+})));
 
 const field = 'w-full rounded-lg border border-[#dad4ca] bg-white px-3.5 py-3 text-base text-ink transition-[border-color,box-shadow] duration-150 focus:border-ink focus:shadow-[0_0_0_3px_rgba(26,26,26,0.08)] focus:outline-none';
 const label = 'text-[13px] font-semibold text-ink';
@@ -20,7 +29,7 @@ const label = 'text-[13px] font-semibold text-ink';
       </div>
     </div>
 
-    <form class="grid gap-[18px] rounded-card bg-white p-8 shadow-float max-[560px]:p-[22px]" id="form" novalidate>
+    <form class="grid gap-[18px] rounded-card bg-white p-8 shadow-float max-[560px]:p-[22px]" id="form" data-sterky={JSON.stringify(sterky)} novalidate>
       <div class="flex items-center gap-3 rounded-lg bg-paper px-3 py-2.5 text-sm text-ink" id="chosen" hidden>
         <span class="relative block size-[34px] flex-none overflow-hidden rounded-md">
           <Wall shade="#D4C4A8" structure="benatsky" />
@@ -102,6 +111,11 @@ const label = 'text-[13px] font-semibold text-ink';
   const fromStructure = STRUCTURES.findIndex((s) => s.id === params.get('struktura'));
   const fromShade = SHADES.findIndex((h) => h.id === params.get('odstin'));
   if (fromStructure > -1 && fromShade > -1) showChoice(fromStructure, fromShade);
+
+  // Coming from a real structure's page: /?stena=oxidace#kontakt
+  const sterky: { id: string; name: string; img: string }[] = JSON.parse(form.dataset.sterky || '[]');
+  const fromStena = sterky.find((s) => s.id === params.get('stena'));
+  if (fromStena) showNamed(fromStena.name, fromStena.img);
 
   // A stucco picked in the Stěrky section shows up here
   window.addEventListener('sterka-pick', (e) => {

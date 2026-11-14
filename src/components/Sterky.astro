@@ -1,80 +1,73 @@
 ---
 /**
- * Stěrky: the real structures, one tab each, with the real photo.
- * Source: every Inspirace entry that has a cover photo and no generated `structure`
- * (add a new one there and it shows up here automatically).
+ * Stěrky by room: pick a room, see the structures that fit it.
+ * Structures = Inspirace entries with a cover photo and no generated `structure`;
+ * rooms come from their `fits` list. Deep link: /#sterky-<room> (used by the header dropdown).
  */
-import Arrow from './Arrow.astro';
-import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import { cz, LEVEL_LABEL } from '../data/sterky';
+import { cz, LEVEL_LABEL, fitsLabel } from '../data/sterky';
+import { getSterky, sterkyRooms } from '../lib/sterky';
 
-const photos = (await getCollection('inspirace'))
-  .filter((e) => e.data.cover && !e.data.structure)
-  .sort((a, b) => a.data.order - b.data.order);
-const first = photos[0];
+const items = await getSterky();
+const rooms = await sterkyRooms();
+const first = rooms[0];
 ---
 {first && (
 <section class="bg-paper py-24 max-[900px]:py-[72px]" id="sterky">
   <div class="wrap">
     <div class="sec-head">
       <h2>Stěrky</h2>
-      <p>{cz('Vyberte si strukturu, která se vám líbí. Na workshopu si ji vyzkoušíte na vzorku.')}</p>
+      <p>{cz('Vyberte místnost a podívejte se, které struktury se do ní hodí.')}</p>
     </div>
 
     <div class="-mx-3 mb-5 overflow-x-auto px-3 pt-1 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <div class="relative inline-flex gap-1 rounded-xl bg-white p-1 shadow-card" role="tablist" aria-label="Struktura stěrky" id="tabs">
-        <span class="tab-ind absolute inset-y-1 left-0 rounded-lg bg-ink" id="tabInd" aria-hidden="true"></span>
-        {photos.map((p, i) => (
+      <div class="relative inline-flex gap-1 rounded-xl bg-white p-1 shadow-card" role="tablist" aria-label="Místnost" id="roomTabs">
+        <span class="tab-ind absolute inset-y-1 left-0 rounded-lg bg-ink" id="roomInd" aria-hidden="true"></span>
+        {rooms.map((r, i) => (
           <button
-            class="tab relative z-[1] cursor-pointer whitespace-nowrap rounded-lg border-0 bg-transparent px-[18px] py-2.5 text-sm font-semibold text-ink aria-selected:text-white"
+            class="tab relative z-[1] inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-lg border-0 bg-transparent px-[18px] py-2.5 text-sm font-semibold text-ink aria-selected:text-white"
             type="button"
             role="tab"
-            id={`tab-${p.id}`}
-            aria-controls="panel"
+            id={`room-${r.id}`}
+            aria-controls="sterkyGrid"
             aria-selected={i === 0 ? 'true' : 'false'}
             tabindex={i === 0 ? 0 : -1}
-            data-id={p.id}
-            data-name={p.data.title}
-            data-desc={cz(p.data.summary)}
-            data-suits={p.data.suits ?? ''}
-            data-level={p.data.level ?? 0}
-          >{p.data.title}</button>
+            data-room={r.id}
+          >{r.label}<span class="cnt text-xs font-medium tabular-nums">{r.count}</span></button>
         ))}
       </div>
     </div>
 
-    <div class="grid items-start gap-9 min-[901px]:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] min-[901px]:gap-12">
-      <div class="relative aspect-[4/3] max-w-full overflow-hidden rounded-card bg-line shadow-float" id="preview" aria-hidden="true">
-        {photos.map((p, i) => (
-          <Image src={p.data.cover!} alt="" widths={[600, 900, 1300]} sizes="(min-width: 901px) 55vw, 100vw" class:list={['pv-photo absolute inset-0 h-full w-full object-cover', i === 0 && 'on']} />
-        ))}
-        <span class="wall-tag" id="pvTag">{first.data.title}</span>
-      </div>
-
-      <div class="grid min-w-0 gap-[22px]" role="tabpanel" id="panel" aria-labelledby={`tab-${first.id}`}>
-        <h3 class="text-[30px] leading-[1.1] font-bold tracking-[-0.02em]" id="sName">{first.data.title}</h3>
-        <p class="text-[16.5px]" id="sDesc">{cz(first.data.summary)}</p>
-        <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-y border-line py-4 text-[14.5px]">
-          <div class="contents" id="rowSuits" hidden={!first.data.suits}>
-            <dt class="text-muted">Kam se hodí</dt><dd class="m-0 font-medium text-ink" id="sSuits">{first.data.suits}</dd>
-          </div>
-          <div class="contents" id="rowLevel" hidden={!first.data.level}>
-            <dt class="text-muted">Náročnost</dt>
-            <dd class="m-0 font-medium text-ink">
-              <span class="mr-2 inline-flex gap-1 align-middle" id="sDots" aria-hidden="true">
-                {[1, 2, 3].map((k) => <i class:list={['size-2 rounded-full', k <= (first.data.level ?? 0) ? 'bg-accent' : 'bg-line']}></i>)}
-              </span><span id="sLevel">{LEVEL_LABEL[first.data.level ?? 0]}</span>
-            </dd>
-          </div>
-        </dl>
-        <a class="justify-self-start text-sm font-semibold text-ink underline decoration-accent underline-offset-4" id="sLink" href={`/inspirace/${first.id}/`}>Prohlédnout realizaci</a>
-        <div class="flex flex-wrap items-center gap-3 border-t border-line pt-6">
-          <button class="btn btn-dark" type="button" id="pickBtn">Chci tuhle stěrku<Arrow /></button>
-          <span class="text-[13px] text-muted">{cz('Skutečná realizace. Odstín a postup doladíme spolu na workshopu.')}</span>
-        </div>
-      </div>
-    </div>
+    <ul class="m-0 grid list-none grid-cols-2 gap-x-3 gap-y-7 p-0 min-[561px]:gap-x-5 min-[901px]:grid-cols-3" id="sterkyGrid" role="tabpanel" aria-labelledby={`room-${first.id}`}>
+      {items.map((it) => (
+        <li class="sk" data-fits={it.data.fits.join(' ')} hidden={!it.data.fits.includes(first.id)}>
+          <a class="sk-link grid gap-3 text-inherit no-underline" href={`/inspirace/${it.id}/`}>
+            <span class="frame relative block aspect-[4/5] overflow-hidden rounded-card bg-line shadow-card">
+              <span class="photo block h-full w-full">
+                <Image src={it.data.cover!} alt={it.data.title} widths={[400, 700, 1000]} sizes="(min-width: 901px) 33vw, 50vw" class="block h-full w-full object-cover" />
+              </span>
+              <span class="go absolute right-2 bottom-2 grid size-8 place-items-center rounded-full bg-white text-ink shadow-[0_4px_14px_rgba(0,0,0,0.15)] min-[561px]:right-3 min-[561px]:bottom-3 min-[561px]:size-10" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </span>
+            </span>
+            <span class="grid gap-1.5">
+              <b class="text-base leading-snug font-bold text-ink min-[561px]:text-lg">{it.data.title}</b>
+              <span class="line-clamp-2 text-sm max-[560px]:hidden">{cz(it.data.summary)}</span>
+              {it.data.level && (
+                <span class="flex items-center gap-2 text-[13px] text-muted">
+                  <span class="inline-flex gap-1" aria-hidden="true">
+                    {[1, 2, 3].map((k) => <i class:list={['size-2 rounded-full', k <= it.data.level! ? 'bg-accent' : 'bg-line']}></i>)}
+                  </span>
+                  Náročnost: {LEVEL_LABEL[it.data.level]}
+                </span>
+              )}
+              {it.data.fits.length > 0 && <span class="text-[13px] text-muted max-[560px]:hidden">Kam se hodí: {fitsLabel(it.data.fits).toLowerCase()}</span>}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="mt-8 text-[13px] text-muted">{cz('Fotky jsou ze skutečných realizací. Odstín a postup doladíme spolu na workshopu.')}</p>
   </div>
 </section>
 )}
@@ -82,28 +75,35 @@ const first = photos[0];
 <style>
   .tab-ind { transition: transform 300ms var(--ease-out-strong), width 300ms var(--ease-out-strong); }
   .tab { transition: color 220ms var(--ease-hover), background-color 220ms var(--ease-hover), transform 160ms var(--ease-hover); }
+  .tab .cnt { opacity: 0.55; }
   @media (hover: hover) and (pointer: fine) { .tab:not([aria-selected='true']):hover { background-color: var(--color-paper); } }
   .tab:active { transform: scale(0.97); }
-  /* Only the chosen photo is visible */
-  .pv-photo { opacity: 0; }
-  .pv-photo.on { opacity: 1; }
+
+  /* Card: photo leans in, shadow deepens, arrow nudges (mouse only) */
+  .frame { transition: box-shadow 300ms var(--ease-hover); }
+  .photo { transition: transform 400ms var(--ease-out-strong); }
+  .go { transition: transform 250ms var(--ease-out-strong); }
+  @media (hover: hover) and (pointer: fine) {
+    .sk-link:hover .frame { box-shadow: var(--shadow-float); }
+    .sk-link:hover .photo { transform: scale(1.03); }
+    .sk-link:hover .go { transform: translateX(3px); }
+  }
+  .sk-link:active .photo { transform: scale(0.99); transition-duration: 160ms; }
+
   @media (prefers-reduced-motion: reduce) {
-    .tab-ind { transition: none; }
-    .tab:active { transform: none; }
+    .tab-ind, .photo, .go { transition: none; }
+    .tab:active, .sk-link:hover .photo, .sk-link:hover .go, .sk-link:active .photo { transform: none; }
   }
 </style>
 
 <script>
-  import { LEVEL_LABEL } from '../data/sterky';
-
-  const tabsEl = document.getElementById('tabs');
+  const tabsEl = document.getElementById('roomTabs');
   if (tabsEl) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const tabs = [...tabsEl.querySelectorAll<HTMLButtonElement>('.tab')];
-    const ind = document.getElementById('tabInd')!;
-    const preview = document.getElementById('preview')!;
-    const imgs = [...preview.querySelectorAll<HTMLImageElement>('.pv-photo')];
-    const $ = (id: string) => document.getElementById(id)!;
+    const ind = document.getElementById('roomInd')!;
+    const grid = document.getElementById('sterkyGrid')!;
+    const cards = [...grid.querySelectorAll<HTMLElement>('.sk')];
     let current = 0;
 
     const moveInd = () => {
@@ -112,59 +112,60 @@ const first = photos[0];
       ind.style.transform = `translateX(${t.offsetLeft}px)`;
     };
 
-    // Blur masks the switch between two photos
-    const settle = () => {
-      if (reduce) return;
-      preview.animate([{ filter: 'blur(6px)', opacity: 0.75 }, { filter: 'blur(0px)', opacity: 1 }], {
-        duration: 280,
-        easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
-      });
-    };
-
-    const select = (i: number) => {
-      if (i === current) return;
+    const select = (i: number, animate: boolean) => {
       current = i;
-      const t = tabs[i];
+      const room = tabs[i].dataset.room!;
       tabs.forEach((b, k) => {
         b.setAttribute('aria-selected', String(k === i));
         b.tabIndex = k === i ? 0 : -1;
       });
-      t.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+      // Keep the chosen tab visible in the row, scrolling the row only (never the page)
+      const row = tabsEl.parentElement!;
+      const t = tabs[i];
+      if (t.offsetLeft < row.scrollLeft || t.offsetLeft + t.offsetWidth > row.scrollLeft + row.clientWidth) {
+        row.scrollTo({ left: t.offsetLeft - 12, behavior: reduce ? 'auto' : 'smooth' });
+      }
+      grid.setAttribute('aria-labelledby', tabs[i].id);
       moveInd();
-      imgs.forEach((img, k) => img.classList.toggle('on', k === i));
-      $('panel').setAttribute('aria-labelledby', t.id);
-      $('pvTag').textContent = t.dataset.name!;
-      $('sName').textContent = t.dataset.name!;
-      $('sDesc').textContent = t.dataset.desc!;
-      $('sLink').setAttribute('href', `/inspirace/${t.dataset.id}/`);
-      const level = Number(t.dataset.level);
-      $('rowSuits').hidden = !t.dataset.suits;
-      $('sSuits').textContent = t.dataset.suits!;
-      $('rowLevel').hidden = !level;
-      $('sLevel').textContent = LEVEL_LABEL[level] ?? '';
-      [...$('sDots').children].forEach((d, k) => {
-        d.classList.toggle('bg-accent', k < level);
-        d.classList.toggle('bg-line', k >= level);
+      const shown = cards.filter((c) => {
+        const on = c.dataset.fits!.split(' ').includes(room);
+        c.hidden = !on;
+        return on;
       });
-      settle();
+      // Short stagger on the cards of the chosen room
+      if (animate && !reduce) shown.forEach((c, k) => c.animate(
+        [{ opacity: 0, transform: 'translateY(8px) scale(0.98)' }, { opacity: 1, transform: 'none' }],
+        { duration: 300, delay: k * 50, easing: 'cubic-bezier(0.23, 1, 0.32, 1)', fill: 'backwards' },
+      ));
     };
 
-    tabs.forEach((t, i) => t.addEventListener('click', () => select(i)));
+    const byRoom = (room: string) => tabs.findIndex((t) => t.dataset.room === room);
+
+    tabs.forEach((t, i) => t.addEventListener('click', () => {
+      if (i === current) return;
+      select(i, true);
+      history.replaceState(null, '', `#sterky-${t.dataset.room}`);
+    }));
     tabsEl.addEventListener('keydown', (e) => {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-      select((current + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length);
+      select((current + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length, true);
       tabs[current].focus();
     });
 
-    // "Chci tuhle stěrku" → attach the choice (name + photo) to the booking form
-    $('pickBtn').addEventListener('click', () => {
-      window.dispatchEvent(new CustomEvent('sterka-pick', {
-        detail: { name: tabs[current].dataset.name, img: imgs[current].currentSrc },
-      }));
-    });
+    // Deep link from the header dropdown: /#sterky-koupelna
+    const fromHash = () => {
+      const m = location.hash.match(/^#sterky-([a-z]+)$/);
+      if (!m) return;
+      const i = byRoom(m[1]);
+      if (i < 0) return;
+      select(i, i !== current);
+      document.getElementById('sterky')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    };
+    window.addEventListener('hashchange', fromHash);
 
     window.addEventListener('resize', moveInd);
     document.fonts?.ready.then(moveInd);
     moveInd();
+    fromHash();
   }
 </script>

@@ -8,7 +8,7 @@ import Wall from '../../components/Wall.astro';
 import Arrow from '../../components/Arrow.astro';
 import InstallationPhoto from '../../components/InstallationPhoto.astro';
 import InstallationCard from '../../components/InstallationCard.astro';
-import { ROOMS, LEVEL_LABEL, cz, structureById, shadeById } from '../../data/sterky';
+import { ROOMS, LEVEL_LABEL, cz, structureById, shadeById, fitsLabel } from '../../data/sterky';
 
 export async function getStaticPaths() {
   const all = await getCollection('inspirace');
@@ -39,7 +39,7 @@ const facts = [
 ].filter(Boolean) as { label: string; value: string }[];
 
 // Prefill the booking form only when the stucco is one of ours
-const learnHref = structure && shade ? `/?struktura=${structure.id}&odstin=${shade.id}#kontakt` : "/#kontakt";
+const learnHref = structure && shade ? `/?struktura=${structure.id}&odstin=${shade.id}#kontakt` : d.cover ? `/?stena=${entry.id}#kontakt` : "/#kontakt";
 ---
 <Layout title={`${d.title} | Inspirace | STĚRKAŘI.`} description={d.summary}>
   <Header />
@@ -103,9 +103,22 @@ const learnHref = structure && shade ? `/?struktura=${structure.id}&odstin=${sha
                 </span>{LEVEL_LABEL[structure.level]}
               </dd>
             </dl>
-            </>) : (
+            </>) : (<>
               <p class="text-xl leading-snug font-bold text-ink">Chcete podobnou stěnu?</p>
-            )}
+              {(d.fits.length > 0 || d.level) && (
+                <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 border-y border-line py-4 text-[14.5px]">
+                  {d.fits.length > 0 && <><dt class="text-muted">Kam se hodí</dt><dd class="m-0 font-medium text-ink">{fitsLabel(d.fits)}</dd></>}
+                  {d.level && <>
+                    <dt class="text-muted">Náročnost</dt>
+                    <dd class="m-0 font-medium text-ink">
+                      <span class="mr-2 inline-flex gap-1 align-middle" aria-hidden="true">
+                        {[1, 2, 3].map((k) => <i class:list={['size-2 rounded-full', k <= d.level! ? 'bg-accent' : 'bg-line']}></i>)}
+                      </span>{LEVEL_LABEL[d.level]}
+                    </dd>
+                  </>}
+                </dl>
+              )}
+            </>)}
             <div class="grid gap-2.5">
               <a class="btn btn-dark" href={learnHref}>Chci se to naučit<Arrow /></a>
               <a class="btn btn-line" href="/#sterky">Prohlédnout stěrky<Arrow /></a>

@@ -2,7 +2,7 @@
 title: Imitace plechu
 summary: Stěrka, která vypadá jako starý kovový plech. Měděné a hnědé tóny, nýty a modrozelená patina.
 level: 3
-suits: Obývák, kuchyň, kavárny a obchody
+fits: [obyvak, kuchyn, komercni]
 cover: ./imitace-plechu/cover.jpg
 order: -3
 ---

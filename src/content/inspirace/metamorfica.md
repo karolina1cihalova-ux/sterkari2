@@ -2,7 +2,7 @@
 title: Metamorfica
 summary: Metalická stěrka s viditelnými tahy hladítka. Hnědé, fialové a zlatavé tóny, které se na světle mění.
 level: 2
-suits: Obývák, ložnice, chodba
+fits: [obyvak, loznice, chodba]
 cover: ./metamorfica/cover.jpg
 order: 0
 ---

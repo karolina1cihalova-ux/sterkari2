@@ -1,6 +1,11 @@
 ---
 import { NAV } from '../data/sterky';
+import { sterkyRooms } from '../lib/sterky';
 import Arrow from './Arrow.astro';
+
+// "Stěrky" opens a small list of rooms that jump to /#sterky-<room>
+const rooms = await sterkyRooms();
+const hasRooms = (href: string) => href === '/#sterky' && rooms.length > 0;
 ---
 <header id="hdr" class="hdr sticky z-50 border-b border-transparent bg-white/95 backdrop-blur-md backdrop-saturate-[1.2] transition-[border-color,box-shadow] duration-200 [&.scrolled]:border-line [&.scrolled]:shadow-[0_10px_24px_-18px_rgb(60_40_25/0.35)]">
   <div class="hdr-in wrap grid min-h-[73px] grid-cols-[1fr_auto_1fr] items-center gap-6 py-3 max-[560px]:grid-cols-[1fr_auto_auto] max-[560px]:gap-2 max-[360px]:gap-1.5">
@@ -11,7 +16,24 @@ import Arrow from './Arrow.astro';
         {NAV.map((item, i) => (
           <li class="flex items-center">
             {i > 0 && <span class="mx-3 font-normal text-[#a1a1a1]" aria-hidden="true">·</span>}
-            <a class="menu-label mr-[-0.2em] transition-colors duration-150 hover:text-accent" href={item.href}>{item.label}</a>
+            {hasRooms(item.href) ? (
+              <div class="has-dd relative">
+                <a class="menu-label inline-flex items-center gap-1.5 mr-[-0.2em] transition-colors duration-150 hover:text-accent" href={item.href} aria-haspopup="true">
+                  {item.label}
+                  <svg class="chev" width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </a>
+                <!-- pt-3 bridges the gap so the pointer can travel into the list -->
+                <div class="dd absolute top-full left-1/2 z-10 pt-3">
+                  <ul class="m-0 grid min-w-[200px] list-none gap-0.5 rounded-card bg-white p-2 shadow-float ring-1 ring-line" aria-label="Stěrky podle místnosti">
+                    {rooms.map((r) => (
+                      <li><a class="dd-link flex items-center justify-between gap-4 rounded-lg px-3 py-2 text-sm font-semibold text-ink no-underline" href={`/#sterky-${r.id}`}>{r.label}<span class="text-xs font-medium text-muted tabular-nums">{r.count}</span></a></li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <a class="menu-label mr-[-0.2em] transition-colors duration-150 hover:text-accent" href={item.href}>{item.label}</a>
+            )}
           </li>
         ))}
       </ul>
@@ -34,7 +56,16 @@ import Arrow from './Arrow.astro';
   <nav class="menu-panel absolute inset-x-0 top-full border-b border-line bg-white shadow-[0_24px_40px_-28px_rgba(26,26,26,0.35)]" id="menuPanel" aria-label="Menu">
     <ul class="m-0 grid list-none justify-items-center p-0 pt-2 pb-5">
       {NAV.map((item) => (
-        <li><a class="menu-label block px-6 py-3.5 mr-[-0.2em] hover:text-accent" href={item.href}>{item.label}</a></li>
+        <li class="grid justify-items-center">
+          <a class="menu-label block px-6 py-3.5 mr-[-0.2em] hover:text-accent" href={item.href}>{item.label}</a>
+          {hasRooms(item.href) && (
+            <span class="-mt-1.5 mb-1.5 flex max-w-[340px] flex-wrap justify-center gap-x-1 gap-y-0.5 px-4">
+              {rooms.map((r) => (
+                <a class="rounded-md px-2 py-1 text-[13px] font-semibold text-muted no-underline hover:text-accent" href={`/#sterky-${r.id}`}>{r.label}</a>
+              ))}
+            </span>
+          )}
+        </li>
       ))}
     </ul>
   </nav>
@@ -59,7 +90,25 @@ import Arrow from './Arrow.astro';
   .burger[aria-expanded='true'] span:first-child { transform: rotate(45deg); }
   .burger[aria-expanded='true'] span:last-child { transform: rotate(-45deg); }
 
-  /* Dropdown: revealed from the top edge, links follow in a short stagger */
+  /* "Stěrky" room list: opens on hover (mouse) or keyboard focus, closes with the same curve */
+  .dd {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 4px);
+    transition: opacity 180ms var(--ease-hover), transform 180ms var(--ease-hover), visibility 0s linear 180ms;
+  }
+  .has-dd:focus-within .dd { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
+  @media (hover: hover) and (pointer: fine) {
+    .has-dd:hover .dd { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
+    .dd-link:hover { background-color: var(--color-paper); }
+  }
+  .has-dd.closed .dd { opacity: 0; visibility: hidden; transition-delay: 0s; }
+  .chev { transition: transform 180ms var(--ease-hover); }
+  .has-dd:focus-within .chev { transform: rotate(180deg); }
+  @media (hover: hover) and (pointer: fine) { .has-dd:hover .chev { transform: rotate(180deg); } }
+  .dd-link { transition: background-color 160ms var(--ease-hover); }
+
+  /* Hamburger panel: revealed from the top edge, links follow in a short stagger */
   .menu-panel {
     clip-path: inset(0 0 100% 0);
     visibility: hidden;
@@ -77,6 +126,7 @@ import Arrow from './Arrow.astro';
     .menu-panel, .menu-panel.open, .burger span { transition: none; }
     .menu-panel a { transform: none; transition: opacity 150ms ease; }
     .burger:active { transform: none; }
+    .dd, .chev { transition: none; }
   }
 </style>
 
@@ -110,13 +160,28 @@ import Arrow from './Arrow.astro';
     if (e.key === 'Escape' && panel.classList.contains('open')) { setMenu(false); burger.focus(); }
   });
 
+  // Room list: close it after a room is picked (the pointer may still be over it)
+  hdr.querySelectorAll<HTMLElement>('.has-dd').forEach((dd) => {
+    dd.addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('.dd-link')) return;
+      dd.classList.add('closed');
+      (document.activeElement as HTMLElement | null)?.blur();
+    });
+    dd.addEventListener('mouseleave', () => dd.classList.remove('closed'));
+    dd.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') (document.activeElement as HTMLElement | null)?.blur();
+    });
+  });
+
   // Switch to the hamburger only when logo + menu + button no longer fit with breathing room
   const fitHeader = () => {
     const wasCompact = hdr.classList.contains('compact');
     hdr.classList.remove('compact'); // measure the full layout (same frame, never painted)
     const cs = getComputedStyle(hdrIn);
     const avail = hdrIn.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-    const need = logo.offsetWidth + navUl.scrollWidth + cta.offsetWidth + MIN_GAP * 2;
+    // Sum of the menu items (not scrollWidth: the hidden room list would count too)
+    const navWidth = [...navUl.children].reduce((w, li) => w + (li as HTMLElement).offsetWidth, 0);
+    const need = logo.offsetWidth + navWidth + cta.offsetWidth + MIN_GAP * 2;
     const compact = need > avail;
     hdr.classList.toggle('compact', compact);
     if (wasCompact && !compact) setMenu(false);

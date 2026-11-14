@@ -2,7 +2,7 @@
 title: Oxidace
 summary: Stěrka s efektem zrezivělého kovu. Rezavě hnědé tóny, tmavé tečky a místy měděnka.
 level: 2
-suits: Obývák, chodba, akcentová stěna
+fits: [obyvak, chodba, komercni]
 cover: ./oxidace/cover.jpg
 order: -2
 ---
