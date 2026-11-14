@@ -39,7 +39,7 @@ const facts = [
 ].filter(Boolean) as { label: string; value: string }[];
 
 // Prefill the booking form only when the stucco is one of ours
-const learnHref = structure && shade ? `/?struktura=${structure.id}&odstin=${shade.id}#kontakt` : d.cover ? `/?stena=${entry.id}#kontakt` : "/#kontakt";
+const learnHref = d.cover && !d.structure ? `/?stena=${entry.id}#kontakt` : "/#kontakt";
 ---
 <Layout title={`${d.title} | Inspirace | STĚRKAŘI.`} description={d.summary}>
   <Header />

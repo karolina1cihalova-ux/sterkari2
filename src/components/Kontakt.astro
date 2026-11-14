@@ -1,18 +1,20 @@
 ---
-import Wall from './Wall.astro';
 import Arrow from './Arrow.astro';
 import { getImage } from 'astro:assets';
 import { getSterky } from '../lib/sterky';
 
-// Real structures, so /?stena=<id>#kontakt can show the chosen one with a small photo
+// Structures for "O jakou strukturu máte zájem?", each with a small square photo
 const sterky = await Promise.all((await getSterky()).map(async (s) => ({
   id: s.id,
   name: s.data.title,
-  img: (await getImage({ src: s.data.cover!, width: 96 })).src,
+  img: (await getImage({ src: s.data.cover!, width: 200 })).src,
 })));
 
 const field = 'w-full rounded-lg border border-[#dad4ca] bg-white px-3.5 py-3 text-base text-ink transition-[border-color,box-shadow] duration-150 focus:border-ink focus:shadow-[0_0_0_3px_rgba(26,26,26,0.08)] focus:outline-none';
 const label = 'text-[13px] font-semibold text-ink';
+const optional = '<i class="font-normal not-italic text-muted">(nepovinné)</i>';
+// Picture tile: the photo gets a terracotta ring when chosen, a dark one on keyboard focus
+const tileImg = 'block aspect-square w-full overflow-hidden rounded-lg bg-line outline-2 outline-offset-2 outline-transparent transition-[outline-color] duration-150 peer-checked:outline-accent peer-focus-visible:outline-ink';
 ---
 <section class="bg-paper pb-24 max-[900px]:pb-[72px]" id="kontakt">
   <!-- Same 1 : 2 columns as the FAQ above, so both paper sections share one grid -->
@@ -29,16 +31,7 @@ const label = 'text-[13px] font-semibold text-ink';
       </div>
     </div>
 
-    <form class="grid gap-[18px] rounded-card bg-white p-8 shadow-float max-[560px]:p-[22px]" id="form" data-sterky={JSON.stringify(sterky)} novalidate>
-      <div class="flex items-center gap-3 rounded-lg bg-paper px-3 py-2.5 text-sm text-ink" id="chosen" hidden>
-        <span class="relative block size-[34px] flex-none overflow-hidden rounded-md">
-          <Wall shade="#D4C4A8" structure="benatsky" />
-          <img class="absolute inset-0 h-full w-full object-cover" id="chImg" alt="" hidden />
-        </span>
-        <span>Láká mě: <b id="chName"></b></span>
-        <button class="ml-auto cursor-pointer border-0 bg-transparent text-[13px] text-muted underline underline-offset-[3px]" type="button" id="chClear">Odebrat</button>
-      </div>
-
+    <form class="grid gap-[18px] rounded-card bg-white p-8 shadow-float max-[560px]:p-[22px]" id="form" novalidate>
       <div class="grid min-w-0 gap-1.5" data-field="name">
         <label class={label} for="name">Jméno a&nbsp;příjmení</label>
         <input class={field} id="name" name="name" autocomplete="name" required />
@@ -50,26 +43,56 @@ const label = 'text-[13px] font-semibold text-ink';
           <input class={field} id="email" name="email" type="email" autocomplete="email" required />
           <span class="text-[13px] text-accent empty:hidden" aria-live="polite" data-msg></span>
         </div>
-        <div class="grid min-w-0 gap-1.5">
-          <label class={label} for="phone">Telefon <i class="font-normal not-italic text-muted">(nepovinné)</i></label>
-          <input class={field} id="phone" name="phone" type="tel" autocomplete="tel" />
+        <div class="grid min-w-0 gap-1.5" data-field="phone">
+          <label class={label} for="phone">Telefon</label>
+          <input class={field} id="phone" name="phone" type="tel" autocomplete="tel" required />
+          <span class="text-[13px] text-accent empty:hidden" aria-live="polite" data-msg></span>
+        </div>
+      </div>
+
+      {sterky.length > 0 && (
+        <fieldset class="m-0 grid min-w-0 gap-2.5 border-0 p-0">
+          <legend class:list={[label, 'mb-2.5 p-0']}>O&nbsp;jakou strukturu máte zájem?</legend>
+          <div class="grid grid-cols-3 gap-x-3 gap-y-3.5 min-[561px]:grid-cols-6">
+            {sterky.map((s) => (
+              <label class="grid cursor-pointer content-start gap-1.5">
+                <input class="peer sr-only" type="radio" name="struktura" value={s.name} data-id={s.id} />
+                <span class={tileImg}><img src={s.img} alt="" loading="lazy" class="h-full w-full object-cover" /></span>
+                <span class="text-[12.5px] leading-tight text-ink peer-checked:font-semibold">{s.name}</span>
+              </label>
+            ))}
+            <label class="grid cursor-pointer content-start gap-1.5">
+              <input class="peer sr-only" type="radio" name="struktura" value="Ještě nevím" />
+              <span class:list={[tileImg, 'grid place-items-center bg-paper text-2xl font-bold text-muted']} aria-hidden="true">?</span>
+              <span class="text-[12.5px] leading-tight text-ink peer-checked:font-semibold">Ještě nevím</span>
+            </label>
+          </div>
+        </fieldset>
+      )}
+
+      <div class="grid gap-[18px] min-[561px]:grid-cols-2">
+        <div class="grid min-w-0 content-start gap-1.5">
+          <label class={label} for="area">Odhadovaný počet metrů čtverečních?</label>
+          <div class="relative">
+            <input class:list={[field, 'pr-12']} id="area" name="area" inputmode="decimal" placeholder="Např. 25" />
+            <span class="pointer-events-none absolute inset-y-0 right-3.5 grid place-items-center text-sm text-muted" aria-hidden="true">m²</span>
+          </div>
+        </div>
+        <div class="grid min-w-0 content-start gap-1.5">
+          <label class={label} for="when">Preferovaný termín <Fragment set:html={optional} /></label>
+          <select class={field} id="when" name="when">
+            <option value="">Vyberte</option>
+            <option>Do dvou týdnů</option>
+            <option>Do měsíce</option>
+            <option>1 až 3 měsíce</option>
+            <option>Později</option>
+          </select>
         </div>
       </div>
       <div class="grid min-w-0 gap-1.5">
-        <label class={label} for="when">Preferovaný termín <i class="font-normal not-italic text-muted">(nepovinné)</i></label>
-        <select class={field} id="when" name="when">
-          <option value="">Je mi to jedno</option>
-          <option>Co nejdříve</option>
-          <option>Prosinec 2026</option>
-          <option>Leden 2027</option>
-          <option>Únor 2027</option>
-        </select>
+        <label class={label} for="msg">Zpráva <Fragment set:html={optional} /></label>
+        <textarea class:list={[field, 'min-h-[110px] resize-y']} id="msg" name="msg" placeholder="Např. jakou stěnu chcete udělat a&nbsp;kde"></textarea>
       </div>
-      <div class="grid min-w-0 gap-1.5">
-        <label class={label} for="msg">Zpráva <i class="font-normal not-italic text-muted">(nepovinné)</i></label>
-        <textarea class:list={[field, 'min-h-[110px] resize-y']} id="msg" name="msg" placeholder="Např. jakou stěnu chcete udělat a&nbsp;jak je velká"></textarea>
-      </div>
-      <input type="hidden" name="sterka" id="sterka" />
       <button class="btn btn-dark justify-self-start" type="submit">Odeslat rezervaci<Arrow /></button>
       <p class="text-[13px] text-muted">Údaje použijeme jen k&nbsp;domluvě workshopu. Podrobnosti v&nbsp;zásadách ochrany osobních údajů.</p>
     </form>
@@ -77,55 +100,17 @@ const label = 'text-[13px] font-semibold text-ink';
 </section>
 
 <script>
-  import { STRUCTURES, SHADES } from '../data/sterky';
-
   const form = document.getElementById('form') as HTMLFormElement;
-  const chosen = document.getElementById('chosen')!;
-  const hiddenInput = document.getElementById('sterka') as HTMLInputElement;
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // Shown by the Sonner toaster (Notifications.tsx)
   const toast = (detail: { message: string; description?: string; type?: 'success' }) =>
     window.dispatchEvent(new CustomEvent('toast', { detail }));
 
-  const showChoice = (structure: number, shade: number) => {
-    const s = STRUCTURES[structure];
-    const h = SHADES[shade];
-    chosen.querySelector('[data-base]')!.setAttribute('fill', h.hex);
-    chosen.querySelector('[data-tex]')!.setAttribute('filter', `url(#t-${s.id})`);
-    return showNamed(`${s.name} · ${h.name}`);
-  };
-
-  // A technique with a real photo (from the Stěrky tabs): its photo replaces the texture swatch
-  const chImg = document.getElementById('chImg') as HTMLImageElement;
-  const showNamed = (name: string, img?: string | null) => {
-    chImg.hidden = !img;
-    if (img) chImg.src = img;
-    document.getElementById('chName')!.textContent = name;
-    hiddenInput.value = name;
-    chosen.hidden = false;
-    return name;
-  };
-
-  // Coming from an installation page ("Chci se to naučit"): /?struktura=beton&odstin=antracit#kontakt
-  const params = new URLSearchParams(location.search);
-  const fromStructure = STRUCTURES.findIndex((s) => s.id === params.get('struktura'));
-  const fromShade = SHADES.findIndex((h) => h.id === params.get('odstin'));
-  if (fromStructure > -1 && fromShade > -1) showChoice(fromStructure, fromShade);
-
-  // Coming from a real structure's page: /?stena=oxidace#kontakt
-  const sterky: { id: string; name: string; img: string }[] = JSON.parse(form.dataset.sterky || '[]');
-  const fromStena = sterky.find((s) => s.id === params.get('stena'));
-  if (fromStena) showNamed(fromStena.name, fromStena.img);
-
-  // A stucco picked in the Stěrky section shows up here
-  window.addEventListener('sterka-pick', (e) => {
-    const d = (e as CustomEvent<{ structure?: number; shade?: number; name?: string; img?: string | null }>).detail;
-    const label = d.name ? showNamed(d.name, d.img) : showChoice(d.structure!, d.shade!);
-    toast({ type: 'success', message: 'Přidáno do rezervace', description: label });
-    document.getElementById('kontakt')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
-    setTimeout(() => (document.getElementById('name') as HTMLInputElement).focus({ preventScroll: true }), reduce ? 0 : 600);
-  });
-  document.getElementById('chClear')!.addEventListener('click', () => { chosen.hidden = true; hiddenInput.value = ''; });
+  // Coming from a structure's page ("Chci se to naučit"): /?stena=oxidace#kontakt preselects it
+  const stena = new URLSearchParams(location.search).get('stena');
+  if (stena) {
+    const radio = form.querySelector<HTMLInputElement>(`input[name="struktura"][data-id="${CSS.escape(stena)}"]`);
+    if (radio) radio.checked = true;
+  }
 
   const check = (name: string, test: (v: string) => boolean, msg: string) => {
     const wrap = form.querySelector<HTMLElement>(`[data-field="${name}"]`)!;
@@ -141,12 +126,12 @@ const label = 'text-[13px] font-semibold text-ink';
     const bad = [
       check('name', (v) => v.length > 1, 'Napište prosím své jméno.'),
       check('email', (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), 'Zkontrolujte prosím e-mail, třeba jana@email.cz.'),
+      check('phone', (v) => v.replace(/\D/g, '').length >= 9, 'Napište prosím telefon, třeba 777 123 456.'),
     ].filter(Boolean);
     if (bad.length) { bad[0]!.focus(); return; }
     // TODO: send to the backend (e.g. Resend) once it exists
     const first = (form.elements.namedItem('name') as HTMLInputElement).value.trim().split(' ')[0];
     toast({ type: 'success', message: `Děkujeme, ${first}!`, description: 'Ukázka: formulář zatím nic neodesílá.' });
     form.reset();
-    chosen.hidden = true;
   });
 </script>
